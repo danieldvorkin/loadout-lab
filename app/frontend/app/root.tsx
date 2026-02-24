@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { ApolloProvider } from "@apollo/client/react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -45,12 +46,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
   return (
-    <ApolloProvider client={apolloClient}>
-      <AuthProvider>
-        <Outlet />
-      </AuthProvider>
-    </ApolloProvider>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <ApolloProvider client={apolloClient}>
+        <AuthProvider>
+          <Outlet />
+        </AuthProvider>
+      </ApolloProvider>
+    </GoogleOAuthProvider>
   );
 }
 
