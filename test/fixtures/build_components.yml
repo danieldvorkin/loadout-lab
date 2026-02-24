@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  build: one
+  component: one
+  position: MyString
+
+two:
+  build: two
+  component: two
+  position: MyString

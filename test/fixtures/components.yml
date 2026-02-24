@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  type: 
+  weight_oz: 9.99
+  msrp_cents: 1
+  manufacturer: one
+  specs: 
+  discontinued: false
+
+two:
+  name: MyString
+  type: 
+  weight_oz: 9.99
+  msrp_cents: 1
+  manufacturer: two
+  specs: 
+  discontinued: false

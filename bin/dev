@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+# Check if foreman is available for running both servers
+if system("which foreman > /dev/null 2>&1")
+  exec "foreman", "start", "-f", "Procfile.dev", *ARGV
+else
+  puts "Install foreman to run both Rails and React together: gem install foreman"
+  puts "Or run each server separately:"
+  puts "  Rails: bin/rails server"
+  puts "  React: cd app/frontend && npm run dev"
+  puts ""
+  puts "Starting Rails server only..."
+  exec "./bin/rails", "server", *ARGV
+end
