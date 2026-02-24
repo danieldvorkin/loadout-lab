@@ -67,11 +67,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_051925) do
     t.string "jti", null: false
     t.string "phone_number", default: "", null: false
     t.string "provider"
-    t.string "uid"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.integer "role", default: 0, null: false
+    t.string "uid"
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
