@@ -21,9 +21,12 @@ class ApplicationController < ActionController::API
     return nil unless token
 
     begin
+      # Use the same secret as Devise JWT config
+      jwt_secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { Rails.application.credentials.devise_jwt_secret_key! }
+      
       jwt_payload = JWT.decode(
         token,
-        Rails.application.credentials.devise_jwt_secret_key!,
+        jwt_secret,
         true,
         { algorithm: 'HS256' }
       ).first
