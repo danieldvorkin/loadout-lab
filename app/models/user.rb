@@ -27,12 +27,13 @@ class User < ApplicationRecord
   end
 
   # Find or create user from Google OAuth payload
-  def self.from_google(uid:, email:, full_name:)
+  def self.from_google(uid:, email:, full_name:, avatar_url: nil)
     user = find_by(provider: "google", uid: uid)
     user ||= find_by(email: email)
 
     if user
-      user.update(provider: "google", uid: uid) if user.provider.blank?
+      # Update OAuth info and profile picture if new
+      user.update(provider: "google", uid: uid, avatar_url: avatar_url) if user.provider.blank? || (avatar_url && user.avatar_url.blank?)
       user
     else
       base_username = email.split("@").first.gsub(/[^a-zA-Z0-9_]/, "")
@@ -45,6 +46,7 @@ class User < ApplicationRecord
         email: email,
         username: username,
         full_name: full_name || "",
+        avatar_url: avatar_url,
         password: SecureRandom.hex(24)
       )
     end

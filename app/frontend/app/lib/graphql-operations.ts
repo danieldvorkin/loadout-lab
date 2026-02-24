@@ -29,6 +29,17 @@ export const REGISTER_USER = gql`
         email
         username
         fullName
+        phoneNumber
+        avatarUrl
+        bio
+        location
+        website
+        socialLinks
+        notificationPreferences
+        isOauthUser
+        provider
+        buildsCount
+        createdAt
       }
       errors
     }
@@ -44,6 +55,17 @@ export const LOGIN_USER = gql`
         email
         username
         fullName
+        phoneNumber
+        avatarUrl
+        bio
+        location
+        website
+        socialLinks
+        notificationPreferences
+        isOauthUser
+        provider
+        buildsCount
+        createdAt
       }
       errors
     }
@@ -59,6 +81,16 @@ export const GOOGLE_OAUTH_LOGIN = gql`
         email
         username
         fullName
+        avatarUrl
+        bio
+        location
+        website
+        socialLinks
+        notificationPreferences
+        isOauthUser
+        provider
+        buildsCount
+        createdAt
       }
       errors
     }

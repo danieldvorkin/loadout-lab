@@ -25,7 +25,8 @@ module Mutations
       user = User.from_google(
         uid: payload["sub"],
         email: payload["email"],
-        full_name: payload["name"]
+        full_name: payload["name"],
+        avatar_url: payload["picture"]
       )
 
       token = generate_jwt_token(user)
