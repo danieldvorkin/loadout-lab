@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { useMutation, useQuery, useApolloClient } from '@apollo/client/react';
-import { LOGIN_USER, REGISTER_USER, GET_CURRENT_USER, GOOGLE_OAUTH_LOGIN } from './graphql-operations';
+import { LOGIN_USER, REGISTER_USER, GET_CURRENT_USER, GOOGLE_OAUTH_LOGIN, GET_USER_PROFILE } from './graphql-operations';
 
 // Helper to safely access localStorage (not available during SSR)
 const isClient = typeof window !== 'undefined';
@@ -28,6 +28,18 @@ interface User {
   username: string;
   fullName?: string;
   phoneNumber?: string;
+  bio?: string;
+  location?: string;
+  avatarUrl?: string;
+  dateOfBirth?: string;
+  preferredDiscipline?: string;
+  website?: string;
+  socialLinks?: Record<string, string>;
+  notificationPreferences?: Record<string, boolean>;
+  isOauthUser?: boolean;
+  provider?: string;
+  buildsCount?: number;
+  createdAt?: string;
 }
 
 interface AuthContextType {
@@ -38,6 +50,8 @@ interface AuthContextType {
   loginWithGoogle: (idToken: string) => Promise<{ success: boolean; errors: string[] }>;
   register: (data: RegisterData) => Promise<{ success: boolean; errors: string[] }>;
   logout: () => void;
+  refetchUser: () => Promise<void>;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 interface RegisterData {
@@ -160,6 +174,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     client.clearStore();
   }, [client]);
 
+  const refetchUser = useCallback(async () => {
+    try {
+      const { data } = await client.query({
+        query: GET_USER_PROFILE,
+        fetchPolicy: 'network-only',
+      });
+      if (data?.currentUser) {
+        setUser(data.currentUser);
+      }
+    } catch (error) {
+      console.error('Failed to refetch user:', error);
+    }
+  }, [client]);
+
+  const updateUser = useCallback((userData: Partial<User>) => {
+    setUser(prev => prev ? { ...prev, ...userData } : null);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -170,6 +202,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithGoogle,
         register,
         logout,
+        refetchUser,
+        updateUser,
       }}
     >
       {children}

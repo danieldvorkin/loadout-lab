@@ -279,3 +279,111 @@ export const REMOVE_COMPONENT_FROM_BUILD = gql`
     }
   }
 `;
+
+// ============================================
+// User Account Mutations
+// ============================================
+
+export const UPDATE_USER_PROFILE = gql`
+  mutation UpdateUserProfile(
+    $username: String
+    $fullName: String
+    $phoneNumber: String
+    $bio: String
+    $location: String
+    $avatarUrl: String
+    $dateOfBirth: ISO8601Date
+    $preferredDiscipline: String
+    $website: String
+    $socialLinks: JSON
+    $notificationPreferences: JSON
+  ) {
+    updateUserProfile(
+      input: {
+        username: $username
+        fullName: $fullName
+        phoneNumber: $phoneNumber
+        bio: $bio
+        location: $location
+        avatarUrl: $avatarUrl
+        dateOfBirth: $dateOfBirth
+        preferredDiscipline: $preferredDiscipline
+        website: $website
+        socialLinks: $socialLinks
+        notificationPreferences: $notificationPreferences
+      }
+    ) {
+      user {
+        id
+        email
+        username
+        fullName
+        phoneNumber
+        bio
+        location
+        avatarUrl
+        dateOfBirth
+        preferredDiscipline
+        website
+        socialLinks
+        notificationPreferences
+        isOauthUser
+        provider
+      }
+      errors
+    }
+  }
+`;
+
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword(
+    $currentPassword: String!
+    $newPassword: String!
+    $newPasswordConfirmation: String!
+  ) {
+    changePassword(
+      input: {
+        currentPassword: $currentPassword
+        newPassword: $newPassword
+        newPasswordConfirmation: $newPasswordConfirmation
+      }
+    ) {
+      success
+      errors
+    }
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($password: String, $confirmation: String!) {
+    deleteAccount(input: { password: $password, confirmation: $confirmation }) {
+      success
+      errors
+    }
+  }
+`;
+
+export const GET_USER_PROFILE = gql`
+  query GetUserProfile {
+    currentUser {
+      id
+      email
+      username
+      fullName
+      phoneNumber
+      bio
+      location
+      avatarUrl
+      dateOfBirth
+      preferredDiscipline
+      website
+      socialLinks
+      notificationPreferences
+      isOauthUser
+      provider
+      buildsCount
+      createdAt
+      updatedAt
+    }
+  }
+`;

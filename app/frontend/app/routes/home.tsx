@@ -54,9 +54,12 @@ export default function Home() {
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <span className="text-sm text-slate-600">
-                    Welcome, <span className="font-medium text-slate-800">{user?.username}</span>
-                  </span>
+                  <Link
+                    to="/account"
+                    className="text-sm text-slate-600 hover:text-sky-600 transition-colors"
+                  >
+                    <span className="font-medium text-slate-800">{user?.username}</span>
+                  </Link>
                   <button
                     onClick={logout}
                     className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"

@@ -12,8 +12,14 @@ class User < ApplicationRecord
   # Roles enum - admin@example.com gets admin, everyone else is user
   enum :role, { user: 0, admin: 1 }
 
+  # Disciplines enum for preferred_discipline
+  DISCIPLINES = %w[prs nrl hunting long_range tactical benchrest].freeze
+
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :website, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, allow_blank: true
+  validates :preferred_discipline, inclusion: { in: DISCIPLINES }, allow_blank: true
+  validates :bio, length: { maximum: 500 }, allow_blank: true
 
   # Allow OAuth users to skip password validation
   def password_required?

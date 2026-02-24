@@ -7,4 +7,8 @@ export default [
   route("components", "routes/components.tsx"),
   route("builds", "routes/builds.tsx"),
   route("builds/:id", "routes/build-detail.tsx"),
+  route("account", "routes/account/index.tsx"),
+  route("account/profile", "routes/account/profile.tsx"),
+  route("account/security", "routes/account/security.tsx"),
+  route("account/preferences", "routes/account/preferences.tsx"),
 ] satisfies RouteConfig;

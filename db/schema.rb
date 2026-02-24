@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_051925) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_061301) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,20 +60,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_051925) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "avatar_url"
+    t.text "bio"
     t.datetime "created_at", null: false
+    t.date "date_of_birth"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "full_name", default: "", null: false
     t.string "jti", null: false
+    t.string "location"
+    t.jsonb "notification_preferences", default: {"email_updates" => true, "build_notifications" => true}
     t.string "phone_number", default: "", null: false
+    t.string "preferred_discipline"
     t.string "provider"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.integer "role", default: 0, null: false
+    t.jsonb "social_links", default: {}
     t.string "uid"
     t.datetime "updated_at", null: false
     t.string "username", null: false
+    t.string "website"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
