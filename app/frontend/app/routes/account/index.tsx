@@ -119,9 +119,17 @@ export default function AccountIndex() {
             {/* User Stats Card */}
             <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
-                  {user.username?.charAt(0).toUpperCase() || 'U'}
-                </div>
+                {user.avatarUrl ? (
+                  <img 
+                    src={user.avatarUrl} 
+                    alt={user.username}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-slate-200"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
+                    {user.username?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
                 <div>
                   <div className="font-semibold text-slate-800">{user.fullName || user.username}</div>
                   <div className="text-sm text-slate-500">{user.email}</div>

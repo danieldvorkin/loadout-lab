@@ -209,12 +209,26 @@ export default function ProfilePage() {
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
             <h2 className="text-lg font-semibold text-slate-800 mb-4">Profile Picture</h2>
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold">
-                {user.username?.charAt(0).toUpperCase() || 'U'}
+              <div className="relative">
+                {user.avatarUrl ? (
+                  <img 
+                    src={user.avatarUrl} 
+                    alt={user.username}
+                    className="w-24 h-24 rounded-full object-cover border-4 border-slate-200"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold">
+                    {user.username?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
               </div>
               <div>
                 <p className="text-sm text-slate-600">
-                  Your avatar is generated from your username. Custom avatar uploads coming soon!
+                  {user.avatarUrl ? (
+                    <>Your profile picture is synced with your {user.provider === 'google' ? 'Google' : 'account'} profile.</>
+                  ) : (
+                    <>Your avatar is generated from your username. {user.provider === 'google' ? 'Your Google profile picture will appear when you sign in.' : 'Custom avatar uploads coming soon!'}</>
+                  )}
                 </p>
               </div>
             </div>
