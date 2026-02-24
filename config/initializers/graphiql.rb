@@ -30,8 +30,3 @@ GraphiQL::Rails.config.initial_query = <<~GRAPHQL
   #   }
   # }
 GRAPHQL
-
-# Set headers for authenticated requests
-GraphiQL::Rails.config.headers = {
-  'X-GraphiQL' => 'true'
-}
