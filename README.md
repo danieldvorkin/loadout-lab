@@ -1,5 +1,5 @@
 # README
-
+[![Netlify Status](https://api.netlify.com/api/v1/badges/12cc177d-6235-49af-9c7b-649aa516be5a/deploy-status)](https://app.netlify.com/projects/loadout-ai/deploys)
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
