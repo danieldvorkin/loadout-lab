@@ -9,12 +9,12 @@
 #     priority: 2
 #     schedule: at 5am every day
 
-# Sync products from all retailers every hour
+# Sync products from all retailers daily at 3am EST (8am UTC)
 default: &default
-  sync_products:
+  sync_products_daily:
     class: SyncProductsJob
     queue: default
-    schedule: every hour
+    schedule: every day at 8am
 
 development:
   <<: *default
