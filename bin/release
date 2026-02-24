@@ -4,7 +4,33 @@ set -e
 
 echo "Running release tasks..."
 
-# Run database migrations
+# Run primary database migrations
 bundle exec rails db:migrate
+
+# Create Solid Queue, Cache, and Cable tables if they don't exist
+echo "Ensuring Solid Queue tables exist..."
+bundle exec rails runner "
+  connection = ActiveRecord::Base.connection
+  unless connection.table_exists?('solid_queue_jobs')
+    puts 'Creating Solid Queue tables...'
+    load Rails.root.join('db/queue_schema.rb')
+  else
+    puts 'Solid Queue tables already exist.'
+  end
+
+  unless connection.table_exists?('solid_cache_entries')
+    puts 'Creating Solid Cache tables...'
+    load Rails.root.join('db/cache_schema.rb')
+  else
+    puts 'Solid Cache tables already exist.'
+  end
+
+  unless connection.table_exists?('solid_cable_messages')
+    puts 'Creating Solid Cable tables...'
+    load Rails.root.join('db/cable_schema.rb')
+  else
+    puts 'Solid Cable tables already exist.'
+  end
+"
 
 echo "Release tasks completed!"
