@@ -26,16 +26,19 @@ export default function Components() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Loading components...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="flex items-center space-x-3">
+          <div className="w-5 h-5 rounded-full bg-sky-500 animate-pulse"></div>
+          <div className="text-lg text-slate-600 font-medium">Loading components...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-red-600 dark:text-red-400">Error: {error.message}</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-lg text-red-600">Error: {error.message}</div>
       </div>
     );
   }
@@ -66,14 +69,14 @@ export default function Components() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
+      <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Components</h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-slate-800">Components</h1>
             <Link
               to="/"
-              className="text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              className="text-sky-600 hover:text-sky-700 font-medium transition-colors"
             >
               ← Back to Home
             </Link>
@@ -81,7 +84,7 @@ export default function Components() {
 
           {components.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-slate-600">
                 No components found. Add some components to get started!
               </p>
             </div>
@@ -89,59 +92,59 @@ export default function Components() {
             <div className="space-y-8">
               {Object.entries(componentsByType).map(([type, typeComponents]) => (
                 <div key={type}>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 capitalize">
+                  <h2 className="text-xl font-semibold text-slate-800 mb-4 capitalize">
                     {type.replace(/_/g, ' ')}
                   </h2>
-                  <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
+                  <div className="bg-white shadow-sm border border-slate-100 overflow-hidden rounded-xl">
+                    <table className="min-w-full divide-y divide-slate-100">
+                      <thead className="bg-slate-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                             Name
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                             Manufacturer
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                             Weight
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                             MSRP
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                             Status
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                      <tbody className="bg-white divide-y divide-slate-50">
                         {typeComponents.map((component) => (
-                          <tr key={component.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                          <tr key={component.id} className="hover:bg-sky-50/50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">
+                              <div className="text-sm font-medium text-slate-800">
                                 {component.name}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-white">
+                              <div className="text-sm text-slate-800">
                                 {component.manufacturer.name}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-slate-500">
                                 {component.manufacturer.country}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                               {formatWeight(component.weightOz)}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                               {formatPrice(component.msrpCents)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               {component.discontinued ? (
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-medium rounded-full bg-red-50 text-red-700 border border-red-100">
                                   Discontinued
                                 </span>
                               ) : (
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-medium rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
                                   Available
                                 </span>
                               )}

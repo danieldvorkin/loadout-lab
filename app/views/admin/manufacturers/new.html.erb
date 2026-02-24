@@ -1,0 +1,42 @@
+<div class="max-w-2xl mx-auto space-y-6">
+  <!-- Breadcrumb -->
+  <nav class="flex items-center space-x-2 text-sm">
+    <a href="/admin/manufacturers" class="text-sky-600 hover:text-sky-700">Manufacturers</a>
+    <span class="text-slate-400">/</span>
+    <span class="text-slate-600">New Manufacturer</span>
+  </nav>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">Add Manufacturer</h1>
+
+    <form action="/admin/manufacturers" method="post" class="space-y-6">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+      
+      <% if @manufacturer.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <h3 class="text-sm font-medium text-red-800 mb-2">Please fix the following errors:</h3>
+          <ul class="list-disc list-inside text-sm text-red-700">
+            <% @manufacturer.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <label for="manufacturer_name" class="block text-sm font-medium text-slate-700 mb-1">Name *</label>
+        <input type="text" name="manufacturer[name]" id="manufacturer_name" value="<%= @manufacturer.name %>" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+      </div>
+
+      <div>
+        <label for="manufacturer_website" class="block text-sm font-medium text-slate-700 mb-1">Website</label>
+        <input type="url" name="manufacturer[website]" id="manufacturer_website" value="<%= @manufacturer.website %>" placeholder="https://example.com" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+      </div>
+
+      <div class="flex items-center justify-end space-x-4 pt-4">
+        <a href="/admin/manufacturers" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">Cancel</a>
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all cursor-pointer">Create Manufacturer</button>
+      </div>
+    </form>
+  </div>
+</div>

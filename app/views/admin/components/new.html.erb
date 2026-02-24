@@ -1,0 +1,73 @@
+<div class="max-w-2xl mx-auto space-y-6">
+  <!-- Breadcrumb -->
+  <nav class="flex items-center space-x-2 text-sm">
+    <a href="/admin/components" class="text-sky-600 hover:text-sky-700">Components</a>
+    <span class="text-slate-400">/</span>
+    <span class="text-slate-600">New Component</span>
+  </nav>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">Add Component</h1>
+
+    <form action="/admin/components" method="post" class="space-y-6">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+      
+      <% if @component.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <h3 class="text-sm font-medium text-red-800 mb-2">Please fix the following errors:</h3>
+          <ul class="list-disc list-inside text-sm text-red-700">
+            <% @component.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <label for="component_name" class="block text-sm font-medium text-slate-700 mb-1">Name *</label>
+        <input type="text" name="component[name]" id="component_name" value="<%= @component.name %>" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+      </div>
+
+      <div>
+        <label for="component_manufacturer_id" class="block text-sm font-medium text-slate-700 mb-1">Manufacturer *</label>
+        <select name="component[manufacturer_id]" id="component_manufacturer_id" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          <option value="">Select a manufacturer</option>
+          <% @manufacturers.each do |m| %>
+            <option value="<%= m.id %>" <%= 'selected' if @component.manufacturer_id == m.id %>><%= m.name %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div>
+        <label for="component_type" class="block text-sm font-medium text-slate-700 mb-1">Type *</label>
+        <select name="component[type]" id="component_type" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          <option value="">Select type</option>
+          <% ['Action', 'Barrel', 'Stock', 'Trigger', 'Scope', 'Mount', 'Rings', 'Bipod', 'MuzzleDevice', 'Chassis', 'Grip', 'Magazine', 'Buttpad', 'CheekRiser', 'Other'].each do |t| %>
+            <option value="<%= t %>" <%= 'selected' if @component.type == t %>><%= t %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="component_weight_oz" class="block text-sm font-medium text-slate-700 mb-1">Weight (oz)</label>
+          <input type="number" step="0.01" name="component[weight_oz]" id="component_weight_oz" value="<%= @component.weight_oz %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+        </div>
+        <div>
+          <label for="component_msrp_cents" class="block text-sm font-medium text-slate-700 mb-1">MSRP (cents)</label>
+          <input type="number" name="component[msrp_cents]" id="component_msrp_cents" value="<%= @component.msrp_cents %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+        </div>
+      </div>
+
+      <div class="flex items-center">
+        <input type="checkbox" name="component[discontinued]" id="component_discontinued" value="1" <%= 'checked' if @component.discontinued %> class="w-4 h-4 text-sky-600 border-slate-300 rounded focus:ring-sky-500">
+        <label for="component_discontinued" class="ml-2 text-sm text-slate-700">Mark as discontinued</label>
+      </div>
+
+      <div class="flex items-center justify-end space-x-4 pt-4">
+        <a href="/admin/components" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">Cancel</a>
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all cursor-pointer">Create Component</button>
+      </div>
+    </form>
+  </div>
+</div>

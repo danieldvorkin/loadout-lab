@@ -1,0 +1,121 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Components</h1>
+      <p class="text-slate-600 mt-1">Manage all components in the database</p>
+    </div>
+    <a href="/admin/components/new" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all">Add Component</a>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <form action="/admin/components" method="get" class="flex flex-wrap items-center gap-4">
+      <div class="flex-1 min-w-[200px]">
+        <input type="text" name="search" value="<%= params[:search] %>" placeholder="Search by component name..." 
+               class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+      </div>
+      <div>
+        <select name="type" class="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="">All Types</option>
+          <% @component_types.each do |type| %>
+            <option value="<%= type %>" <%= 'selected' if params[:type] == type %>><%= type.titleize %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <select name="manufacturer_id" class="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="">All Manufacturers</option>
+          <% @manufacturers.each do |m| %>
+            <option value="<%= m.id %>" <%= 'selected' if params[:manufacturer_id] == m.id.to_s %>><%= m.name %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <select name="status" class="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="">All Status</option>
+          <option value="active" <%= 'selected' if params[:status] == 'active' %>>Active</option>
+          <option value="discontinued" <%= 'selected' if params[:status] == 'discontinued' %>>Discontinued</option>
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition-colors cursor-pointer">Search</button>
+      <% if params[:search].present? || params[:type].present? || params[:manufacturer_id].present? || params[:status].present? %>
+        <a href="/admin/components" class="px-4 py-2 text-slate-600 hover:text-slate-800">Clear</a>
+      <% end %>
+    </form>
+  </div>
+
+  <!-- Filter by Type (quick links) -->
+  <div class="flex items-center space-x-2 flex-wrap gap-2">
+    <a href="/admin/components" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors <%= params[:type].blank? ? 'bg-sky-100 text-sky-700' : 'text-slate-600 hover:bg-slate-100' %>">All</a>
+    <% @component_types.each do |type| %>
+      <a href="/admin/components?type=<%= type %>" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors <%= params[:type] == type ? 'bg-sky-100 text-sky-700' : 'text-slate-600 hover:bg-slate-100' %>"><%= type.titleize %></a>
+    <% end %>
+  </div>
+
+  <!-- Components Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-100">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Component</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Manufacturer</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Type</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Weight</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">MSRP</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-slate-600 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @components.each do |component| %>
+          <tr class="hover:bg-sky-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <p class="font-medium text-slate-800"><%= component.name %></p>
+            </td>
+            <td class="px-6 py-4 text-slate-600">
+              <%= component.manufacturer.name %>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-full">
+                <%= component.type %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= component.weight_oz ? "#{component.weight_oz} oz" : '—' %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= component.msrp_cents ? number_to_currency(component.msrp_cents / 100.0) : '—' %>
+            </td>
+            <td class="px-6 py-4">
+              <% if component.discontinued %>
+                <span class="px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-full">Discontinued</span>
+              <% else %>
+                <span class="px-2.5 py-1 text-xs font-medium bg-emerald-50 text-emerald-600 rounded-full">Active</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <a href="/admin/components/<%= component.id %>" class="text-sky-600 hover:text-sky-700 text-sm font-medium">View</a>
+              <a href="/admin/components/<%= component.id %>/edit" class="text-slate-600 hover:text-slate-700 text-sm font-medium">Edit</a>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if @components.respond_to?(:total_pages) && @components.total_pages > 1 %>
+    <div class="flex justify-center">
+      <nav class="flex items-center space-x-2">
+        <% if @components.current_page > 1 %>
+          <a href="/admin/components?page=<%= @components.current_page - 1 %><%= "&type=#{params[:type]}" if params[:type] %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Previous</a>
+        <% end %>
+        <span class="px-3 py-2 text-sm text-slate-600">Page <%= @components.current_page %> of <%= @components.total_pages %></span>
+        <% if @components.current_page < @components.total_pages %>
+          <a href="/admin/components?page=<%= @components.current_page + 1 %><%= "&type=#{params[:type]}" if params[:type] %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Next</a>
+        <% end %>
+      </nav>
+    </div>
+  <% end %>
+</div>

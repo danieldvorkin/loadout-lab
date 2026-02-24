@@ -1,0 +1,92 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Users</h1>
+      <p class="text-slate-600 mt-1">Manage all registered users</p>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <form action="/admin/users" method="get" class="flex flex-wrap items-center gap-4">
+      <div class="flex-1 min-w-[200px]">
+        <input type="text" name="search" value="<%= params[:search] %>" placeholder="Search by username or email..." 
+               class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+      </div>
+      <div>
+        <select name="role" class="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="">All Roles</option>
+          <option value="user" <%= 'selected' if params[:role] == 'user' %>>User</option>
+          <option value="admin" <%= 'selected' if params[:role] == 'admin' %>>Admin</option>
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition-colors cursor-pointer">Search</button>
+      <% if params[:search].present? || params[:role].present? %>
+        <a href="/admin/users" class="px-4 py-2 text-slate-600 hover:text-slate-800">Clear</a>
+      <% end %>
+    </form>
+  </div>
+
+  <!-- Users Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-100">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">User</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Role</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Builds</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Joined</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-slate-600 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-sky-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  <%= user.username[0].upcase %>
+                </div>
+                <div class="ml-4">
+                  <p class="font-medium text-slate-800"><%= user.username %></p>
+                  <p class="text-sm text-slate-500"><%= user.email %></p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2.5 py-1 text-xs font-medium rounded-full <%= user.admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600' %>">
+                <%= user.role %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-slate-600">
+              <%= user.builds.count %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= user.created_at.strftime('%b %d, %Y') %>
+            </td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <a href="/admin/users/<%= user.id %>" class="text-sky-600 hover:text-sky-700 text-sm font-medium">View</a>
+              <a href="/admin/users/<%= user.id %>/edit" class="text-slate-600 hover:text-slate-700 text-sm font-medium">Edit</a>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if @users.respond_to?(:total_pages) && @users.total_pages > 1 %>
+    <div class="flex justify-center">
+      <nav class="flex items-center space-x-2">
+        <% if @users.current_page > 1 %>
+          <a href="/admin/users?page=<%= @users.current_page - 1 %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Previous</a>
+        <% end %>
+        <span class="px-3 py-2 text-sm text-slate-600">Page <%= @users.current_page %> of <%= @users.total_pages %></span>
+        <% if @users.current_page < @users.total_pages %>
+          <a href="/admin/users?page=<%= @users.current_page + 1 %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Next</a>
+        <% end %>
+      </nav>
+    </div>
+  <% end %>
+</div>

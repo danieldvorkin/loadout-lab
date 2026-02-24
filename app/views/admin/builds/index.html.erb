@@ -1,0 +1,110 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Builds</h1>
+      <p class="text-slate-600 mt-1">View all user-created builds</p>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <form action="/admin/builds" method="get" class="flex flex-wrap items-center gap-4">
+      <div class="flex-1 min-w-[200px]">
+        <input type="text" name="search" value="<%= params[:search] %>" placeholder="Search by build name or username..." 
+               class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+      </div>
+      <div>
+        <select name="discipline" class="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="">All Disciplines</option>
+          <% @disciplines.each do |d| %>
+            <option value="<%= d %>" <%= 'selected' if params[:discipline] == d %>><%= d.upcase %></option>
+          <% end %>
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition-colors cursor-pointer">Search</button>
+      <% if params[:search].present? || params[:discipline].present? %>
+        <a href="/admin/builds" class="px-4 py-2 text-slate-600 hover:text-slate-800">Clear</a>
+      <% end %>
+    </form>
+  </div>
+
+  <!-- Filter by Discipline (quick links) -->
+  <div class="flex items-center space-x-2 flex-wrap gap-2">
+    <a href="/admin/builds" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors <%= params[:discipline].blank? ? 'bg-sky-100 text-sky-700' : 'text-slate-600 hover:bg-slate-100' %>">All</a>
+    <% @disciplines.each do |discipline| %>
+      <a href="/admin/builds?discipline=<%= discipline %>" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors <%= params[:discipline] == discipline ? 'bg-sky-100 text-sky-700' : 'text-slate-600 hover:bg-slate-100' %>"><%= discipline.upcase %></a>
+    <% end %>
+  </div>
+
+  <!-- Builds Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-100">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Build Name</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">User</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Discipline</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Components</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Weight</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Cost</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Created</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-slate-600 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @builds.each do |build| %>
+          <tr class="hover:bg-sky-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <p class="font-medium text-slate-800"><%= build.name %></p>
+            </td>
+            <td class="px-6 py-4">
+              <a href="/admin/users/<%= build.user_id %>" class="text-sky-600 hover:text-sky-700 text-sm"><%= build.user.username %></a>
+            </td>
+            <td class="px-6 py-4">
+              <% if build.discipline.present? %>
+                <span class="px-2.5 py-1 text-xs font-medium bg-indigo-50 text-indigo-600 rounded-full uppercase"><%= build.discipline %></span>
+              <% else %>
+                <span class="text-slate-400">—</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= build.build_components.count %> parts
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= build.total_weight_oz ? "#{build.total_weight_oz} oz" : '—' %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= build.total_cost_cents ? number_to_currency(build.total_cost_cents / 100.0) : '—' %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <%= build.created_at.strftime('%b %d, %Y') %>
+            </td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <a href="/admin/builds/<%= build.id %>" class="text-sky-600 hover:text-sky-700 text-sm font-medium">View</a>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <% if @builds.empty? %>
+      <div class="p-8 text-center text-slate-500">No builds found.</div>
+    <% end %>
+  </div>
+
+  <!-- Pagination -->
+  <% if @builds.respond_to?(:total_pages) && @builds.total_pages > 1 %>
+    <div class="flex justify-center">
+      <nav class="flex items-center space-x-2">
+        <% if @builds.current_page > 1 %>
+          <a href="/admin/builds?page=<%= @builds.current_page - 1 %><%= "&discipline=#{params[:discipline]}" if params[:discipline] %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Previous</a>
+        <% end %>
+        <span class="px-3 py-2 text-sm text-slate-600">Page <%= @builds.current_page %> of <%= @builds.total_pages %></span>
+        <% if @builds.current_page < @builds.total_pages %>
+          <a href="/admin/builds?page=<%= @builds.current_page + 1 %><%= "&discipline=#{params[:discipline]}" if params[:discipline] %>" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Next</a>
+        <% end %>
+      </nav>
+    </div>
+  <% end %>
+</div>

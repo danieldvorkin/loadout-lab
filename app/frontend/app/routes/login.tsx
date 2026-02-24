@@ -27,17 +27,17 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Sign in to PRS Builder
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-800">
+            Sign in to Loadout Lab
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-center text-sm text-slate-600">
             Or{' '}
             <Link
               to="/register"
-              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              className="font-medium text-sky-600 hover:text-sky-500"
             >
               create a new account
             </Link>
@@ -46,13 +46,13 @@ export default function Login() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {errors.length > 0 && (
-            <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
+            <div className="rounded-xl bg-red-50 border border-red-100 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                  <h3 className="text-sm font-medium text-red-800">
                     There were errors with your submission
                   </h3>
-                  <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                  <div className="mt-2 text-sm text-red-700">
                     <ul className="list-disc pl-5 space-y-1">
                       {errors.map((error, index) => (
                         <li key={index}>{error}</li>
@@ -64,9 +64,9 @@ export default function Login() {
             </div>
           )}
 
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <label htmlFor="email-address" className="block text-sm font-medium text-slate-700 mb-1">
                 Email address
               </label>
               <input
@@ -75,14 +75,14 @@ export default function Login() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
                 Password
               </label>
               <input
@@ -91,8 +91,8 @@ export default function Login() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -103,7 +103,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sky-500/25 transition-all"
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>

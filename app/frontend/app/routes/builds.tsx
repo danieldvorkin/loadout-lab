@@ -56,14 +56,14 @@ export default function Builds() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Sign in to view your builds
           </h2>
           <Link
             to="/login"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            className="inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all"
           >
             Sign in
           </Link>
@@ -74,16 +74,19 @@ export default function Builds() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Loading builds...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="flex items-center space-x-3">
+          <div className="w-5 h-5 rounded-full bg-sky-500 animate-pulse"></div>
+          <div className="text-lg text-slate-600 font-medium">Loading builds...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-red-600 dark:text-red-400">Error: {error.message}</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-lg text-red-600">Error: {error.message}</div>
       </div>
     );
   }
@@ -122,26 +125,26 @@ export default function Builds() {
   const disciplines = ['prs', 'nrl', 'benchrest', 'f-class', 'tactical', 'hunting'];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
+      <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Builds</h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Welcome, {user?.username}!
+              <h1 className="text-3xl font-bold text-slate-800">My Builds</h1>
+              <p className="text-slate-600">
+                Welcome, <span className="font-medium">{user?.username}</span>!
               </p>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex items-center space-x-4">
               <Link
                 to="/"
-                className="text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                className="text-sky-600 hover:text-sky-700 font-medium transition-colors"
               >
                 ← Back to Home
               </Link>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-5 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all"
               >
                 + New Build
               </button>
@@ -149,13 +152,13 @@ export default function Builds() {
           </div>
 
           {showCreateForm && (
-            <div className="mb-6 bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+            <div className="mb-8 bg-white shadow-sm border border-slate-100 rounded-2xl p-8">
+              <h3 className="text-lg font-semibold text-slate-800 mb-6">
                 Create New Build
               </h3>
-              <form onSubmit={handleCreateBuild} className="space-y-4">
+              <form onSubmit={handleCreateBuild} className="space-y-5">
                 <div>
-                  <label htmlFor="buildName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="buildName" className="block text-sm font-medium text-slate-700 mb-1">
                     Build Name *
                   </label>
                   <input
@@ -164,19 +167,19 @@ export default function Builds() {
                     value={newBuildName}
                     onChange={(e) => setNewBuildName(e.target.value)}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                    className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-slate-800 placeholder-slate-400 transition-all"
                     placeholder="e.g., Competition PRS Build"
                   />
                 </div>
                 <div>
-                  <label htmlFor="discipline" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="discipline" className="block text-sm font-medium text-slate-700 mb-1">
                     Discipline
                   </label>
                   <select
                     id="discipline"
                     value={newBuildDiscipline}
                     onChange={(e) => setNewBuildDiscipline(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                    className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-slate-800 transition-all"
                   >
                     <option value="">Select a discipline</option>
                     {disciplines.map((d) => (
@@ -186,18 +189,18 @@ export default function Builds() {
                     ))}
                   </select>
                 </div>
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 pt-2">
                   <button
                     type="submit"
                     disabled={creating}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                    className="inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 disabled:opacity-50 shadow-lg shadow-sky-500/25 transition-all"
                   >
                     {creating ? 'Creating...' : 'Create Build'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    className="inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
                     Cancel
                   </button>
@@ -207,13 +210,13 @@ export default function Builds() {
           )}
 
           {builds.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-slate-100">
+              <p className="text-slate-600 mb-6">
                 You haven't created any builds yet.
               </p>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all"
               >
                 Create Your First Build
               </button>
@@ -223,47 +226,47 @@ export default function Builds() {
               {builds.map((build) => (
                 <div
                   key={build.id}
-                  className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden"
+                  className="bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden hover:shadow-md hover:border-slate-200 transition-all"
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                        <h3 className="text-lg font-semibold text-slate-800">
                           {build.name}
                         </h3>
                         {build.discipline && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mt-1">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-sky-50 to-indigo-50 text-sky-700 border border-sky-100 mt-2">
                             {build.discipline.toUpperCase()}
                           </span>
                         )}
                       </div>
                       <button
                         onClick={() => handleDeleteBuild(build.id)}
-                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                        className="text-slate-400 hover:text-red-500 transition-colors"
                       >
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                       </button>
                     </div>
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-5 space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">Total Weight:</span>
-                        <span className="text-gray-900 dark:text-white">{formatWeight(build.totalWeightOz)}</span>
+                        <span className="text-slate-500">Total Weight:</span>
+                        <span className="text-slate-800 font-medium">{formatWeight(build.totalWeightOz)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">Total Cost:</span>
-                        <span className="text-gray-900 dark:text-white">{formatPrice(build.totalCostCents)}</span>
+                        <span className="text-slate-500">Total Cost:</span>
+                        <span className="text-slate-800 font-medium">{formatPrice(build.totalCostCents)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">Components:</span>
-                        <span className="text-gray-900 dark:text-white">{build.buildComponents.length}</span>
+                        <span className="text-slate-500">Components:</span>
+                        <span className="text-slate-800 font-medium">{build.buildComponents.length}</span>
                       </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="mt-5 pt-5 border-t border-slate-100">
                       <Link
                         to={`/builds/${build.id}`}
-                        className="text-blue-600 hover:text-blue-500 dark:text-blue-400 text-sm font-medium"
+                        className="text-sky-600 hover:text-sky-700 text-sm font-medium transition-colors"
                       >
                         View Details →
                       </Link>

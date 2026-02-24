@@ -81,16 +81,16 @@ export default function BuildDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Loading build...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50">
+        <div className="text-lg text-slate-600">Loading build...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-red-600 dark:text-red-400">Error: {error.message}</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50">
+        <div className="text-lg text-red-600">Error: {error.message}</div>
       </div>
     );
   }
@@ -99,10 +99,10 @@ export default function BuildDetail() {
 
   if (!build) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Build not found</h2>
-          <Link to="/builds" className="text-blue-600 hover:text-blue-500">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">Build not found</h2>
+          <Link to="/builds" className="text-sky-600 hover:text-sky-700">
             ← Back to builds
           </Link>
         </div>
@@ -156,25 +156,25 @@ export default function BuildDetail() {
   }, {} as Record<string, BuildComponent[]>);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              <Link to="/builds" className="text-blue-600 hover:text-blue-500 text-sm mb-2 inline-block">
+              <Link to="/builds" className="text-sky-600 hover:text-sky-700 text-sm mb-2 inline-block">
                 ← Back to builds
               </Link>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{build.name}</h1>
+              <h1 className="text-3xl font-bold text-slate-800">{build.name}</h1>
               {build.discipline && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mt-2">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-sky-50 to-indigo-50 text-indigo-700 border border-indigo-100 mt-2">
                   {build.discipline.toUpperCase()}
                 </span>
               )}
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all duration-200"
             >
               + Add Component
             </button>
@@ -182,21 +182,21 @@ export default function BuildDetail() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Weight</h3>
-              <p className="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+              <h3 className="text-sm font-medium text-slate-500">Total Weight</h3>
+              <p className="mt-2 text-2xl font-semibold text-slate-800">
                 {formatWeight(build.totalWeightOz)}
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Cost</h3>
-              <p className="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+              <h3 className="text-sm font-medium text-slate-500">Total Cost</h3>
+              <p className="mt-2 text-2xl font-semibold text-slate-800">
                 {formatPrice(build.totalCostCents)}
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Components</h3>
-              <p className="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+              <h3 className="text-sm font-medium text-slate-500">Components</h3>
+              <p className="mt-2 text-2xl font-semibold text-slate-800">
                 {build.buildComponents.length}
               </p>
             </div>
@@ -204,13 +204,13 @@ export default function BuildDetail() {
 
           {/* Add Component Form */}
           {showAddForm && (
-            <div className="mb-6 bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+            <div className="mb-6 bg-white shadow-sm rounded-2xl border border-slate-100 p-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">
                 Add Component
               </h3>
               <form onSubmit={handleAddComponent} className="space-y-4">
                 <div>
-                  <label htmlFor="component" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="component" className="block text-sm font-medium text-slate-700">
                     Component *
                   </label>
                   <select
@@ -218,7 +218,7 @@ export default function BuildDetail() {
                     value={selectedComponentId}
                     onChange={(e) => setSelectedComponentId(e.target.value)}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                    className="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-slate-800 sm:text-sm transition-all duration-200"
                   >
                     <option value="">Select a component</option>
                     {componentsData?.components.map((component) => (
@@ -229,14 +229,14 @@ export default function BuildDetail() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="position" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="position" className="block text-sm font-medium text-slate-700">
                     Position
                   </label>
                   <select
                     id="position"
                     value={selectedPosition}
                     onChange={(e) => setSelectedPosition(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                    className="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-slate-800 sm:text-sm transition-all duration-200"
                   >
                     <option value="">Select a position</option>
                     {positions.map((pos) => (
@@ -250,14 +250,14 @@ export default function BuildDetail() {
                   <button
                     type="submit"
                     disabled={adding}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 disabled:opacity-50 transition-all duration-200"
                   >
                     {adding ? 'Adding...' : 'Add Component'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddForm(false)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    className="inline-flex items-center px-4 py-2 border border-slate-200 text-sm font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 transition-all duration-200"
                   >
                     Cancel
                   </button>
@@ -268,13 +268,13 @@ export default function BuildDetail() {
 
           {/* Components List */}
           {build.buildComponents.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+              <p className="text-slate-600 mb-4">
                 No components added to this build yet.
               </p>
               <button
                 onClick={() => setShowAddForm(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all duration-200"
               >
                 Add Your First Component
               </button>
@@ -283,54 +283,54 @@ export default function BuildDetail() {
             <div className="space-y-6">
               {Object.entries(componentsByPosition).map(([position, components]) => (
                 <div key={position}>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3 capitalize">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-3 capitalize">
                     {position.replace(/_/g, ' ')}
                   </h3>
-                  <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
+                  <div className="bg-white shadow-sm rounded-2xl border border-slate-100 overflow-hidden">
+                    <table className="min-w-full divide-y divide-slate-100">
+                      <thead className="bg-slate-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
                             Component
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
                             Manufacturer
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
                             Weight
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
                             Price
                           </th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-right text-xs font-medium text-slate-600 uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      <tbody className="divide-y divide-slate-100">
                         {components.map((bc) => (
-                          <tr key={bc.id}>
+                          <tr key={bc.id} className="hover:bg-sky-50/50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">
+                              <div className="text-sm font-medium text-slate-800">
                                 {bc.component.name}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-slate-500">
                                 {bc.component.type}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                               {bc.component.manufacturer.name}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                               {bc.component.weightOz ? `${bc.component.weightOz} oz` : 'N/A'}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                               {formatPrice(bc.component.msrpCents)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                               <button
                                 onClick={() => handleRemoveComponent(bc.id)}
-                                className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                className="text-slate-400 hover:text-red-500 transition-colors"
                               >
                                 Remove
                               </button>

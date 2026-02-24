@@ -18,26 +18,70 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
-    # Fetch all components
-    field :components, [Types::ComponentType], null: false, description: "Fetch all components"
-
-    def components
-      Component.includes(:manufacturer).all
+    # Fetch all components with filtering
+    field :components, [Types::ComponentType], null: false, description: "Fetch all components with optional filtering" do
+      argument :search, String, required: false, description: "Search by component name"
+      argument :type, String, required: false, description: "Filter by component type"
+      argument :manufacturer_id, ID, required: false, description: "Filter by manufacturer"
+      argument :active_only, Boolean, required: false, description: "Only show active (non-discontinued) components"
+      argument :limit, Integer, required: false, description: "Limit number of results"
+      argument :offset, Integer, required: false, description: "Offset for pagination"
     end
 
-    # Fetch all manufacturers
-    field :manufacturers, [Types::ManufacturerType], null: false, description: "Fetch all manufacturers"
-
-    def manufacturers
-      Manufacturer.all
+    def components(search: nil, type: nil, manufacturer_id: nil, active_only: nil, limit: nil, offset: nil)
+      result = Component.includes(:manufacturer).order(:name)
+      
+      if search.present?
+        search_term = "%#{search.downcase}%"
+        result = result.where("LOWER(name) LIKE ?", search_term)
+      end
+      
+      result = result.where(type: type) if type.present?
+      result = result.where(manufacturer_id: manufacturer_id) if manufacturer_id.present?
+      result = result.where(discontinued: [false, nil]) if active_only
+      
+      result = result.offset(offset) if offset.present?
+      result = result.limit(limit) if limit.present?
+      
+      result
     end
 
-    # Fetch current user's builds
-    field :builds, [Types::BuildType], null: false, description: "Fetch current user's builds"
+    # Fetch all manufacturers with filtering
+    field :manufacturers, [Types::ManufacturerType], null: false, description: "Fetch all manufacturers with optional filtering" do
+      argument :search, String, required: false, description: "Search by manufacturer name"
+      argument :limit, Integer, required: false, description: "Limit number of results"
+    end
 
-    def builds
+    def manufacturers(search: nil, limit: nil)
+      result = Manufacturer.order(:name)
+      
+      if search.present?
+        search_term = "%#{search.downcase}%"
+        result = result.where("LOWER(name) LIKE ?", search_term)
+      end
+      
+      result = result.limit(limit) if limit.present?
+      result
+    end
+
+    # Fetch current user's builds with filtering
+    field :builds, [Types::BuildType], null: false, description: "Fetch current user's builds with optional filtering" do
+      argument :search, String, required: false, description: "Search by build name"
+      argument :discipline, String, required: false, description: "Filter by discipline"
+    end
+
+    def builds(search: nil, discipline: nil)
       return [] unless context[:current_user]
-      context[:current_user].builds.includes(:build_components, :components)
+      
+      result = context[:current_user].builds.includes(:build_components, :components).order(created_at: :desc)
+      
+      if search.present?
+        search_term = "%#{search.downcase}%"
+        result = result.where("LOWER(name) LIKE ?", search_term)
+      end
+      
+      result = result.where(discipline: discipline) if discipline.present?
+      result
     end
 
     # Fetch a single build by ID
@@ -73,6 +117,20 @@ module Types
 
     def manufacturer(id:)
       Manufacturer.find_by(id: id)
+    end
+
+    # Get list of available component types
+    field :component_types, [String], null: false, description: "Fetch list of all component types"
+
+    def component_types
+      Component::TYPES
+    end
+
+    # Get list of available disciplines
+    field :disciplines, [String], null: false, description: "Fetch list of all build disciplines"
+
+    def disciplines
+      Build::DISCIPLINES
     end
   end
 end

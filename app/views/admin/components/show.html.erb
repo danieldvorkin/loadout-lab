@@ -1,0 +1,92 @@
+<div class="space-y-6">
+  <!-- Breadcrumb -->
+  <nav class="flex items-center space-x-2 text-sm">
+    <a href="/admin/components" class="text-sky-600 hover:text-sky-700">Components</a>
+    <span class="text-slate-400">/</span>
+    <span class="text-slate-600"><%= @component.name %></span>
+  </nav>
+
+  <!-- Component Header -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <div class="flex items-center space-x-3">
+          <h1 class="text-2xl font-bold text-slate-800"><%= @component.name %></h1>
+          <% if @component.discontinued %>
+            <span class="px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-full">Discontinued</span>
+          <% else %>
+            <span class="px-2.5 py-1 text-xs font-medium bg-emerald-50 text-emerald-600 rounded-full">Active</span>
+          <% end %>
+        </div>
+        <p class="text-slate-500 mt-1">
+          <%= @component.manufacturer.name %> · <%= @component.type %>
+        </p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="/admin/components/<%= @component.id %>/edit" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Edit</a>
+        <form action="/admin/components/<%= @component.id %>" method="post" class="inline" onsubmit="return confirm('Are you sure? This will remove it from all builds.');">
+          <input type="hidden" name="_method" value="delete">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+          <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Component Details -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="text-sm font-medium text-slate-500 mb-4">Details</h3>
+      <dl class="space-y-4">
+        <div class="flex justify-between">
+          <dt class="text-slate-600">Type</dt>
+          <dd class="font-medium text-slate-800"><%= @component.type %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-slate-600">Manufacturer</dt>
+          <dd class="font-medium text-slate-800">
+            <a href="/admin/manufacturers/<%= @component.manufacturer.id %>" class="text-sky-600 hover:text-sky-700"><%= @component.manufacturer.name %></a>
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-slate-600">Weight</dt>
+          <dd class="font-medium text-slate-800"><%= @component.weight_oz ? "#{@component.weight_oz} oz" : '—' %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-slate-600">MSRP</dt>
+          <dd class="font-medium text-slate-800"><%= @component.msrp_cents ? number_to_currency(@component.msrp_cents / 100.0) : '—' %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-slate-600">Status</dt>
+          <dd class="font-medium <%= @component.discontinued ? 'text-red-600' : 'text-emerald-600' %>">
+            <%= @component.discontinued ? 'Discontinued' : 'Active' %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="text-sm font-medium text-slate-500 mb-4">Specifications</h3>
+      <% if @component.specs.present? %>
+        <dl class="space-y-3">
+          <% @component.specs.each do |key, value| %>
+            <div class="flex justify-between">
+              <dt class="text-slate-600 capitalize"><%= key.to_s.humanize %></dt>
+              <dd class="font-medium text-slate-800"><%= value %></dd>
+            </div>
+          <% end %>
+        </dl>
+      <% else %>
+        <p class="text-slate-500 text-center py-4">No specifications available</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Timestamps -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between text-sm text-slate-500">
+      <span>Created: <%= @component.created_at.strftime('%B %d, %Y at %I:%M %p') %></span>
+      <span>Last updated: <%= @component.updated_at.strftime('%B %d, %Y at %I:%M %p') %></span>
+    </div>
+  </div>
+</div>

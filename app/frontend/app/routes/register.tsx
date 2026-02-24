@@ -45,32 +45,35 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h1 className="text-center text-2xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
+            Loadout Lab
+          </h1>
+          <h2 className="mt-4 text-center text-3xl font-extrabold text-slate-800">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-center text-sm text-slate-600">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              className="font-medium text-sky-600 hover:text-sky-700"
             >
               Sign in
             </Link>
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 bg-white rounded-2xl shadow-sm border border-slate-100 p-8" onSubmit={handleSubmit}>
           {errors.length > 0 && (
-            <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
+            <div className="rounded-xl bg-red-50 border border-red-100 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                  <h3 className="text-sm font-medium text-red-800">
                     There were errors with your submission
                   </h3>
-                  <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                  <div className="mt-2 text-sm text-red-700">
                     <ul className="list-disc pl-5 space-y-1">
                       {errors.map((error, index) => (
                         <li key={index}>{error}</li>
@@ -84,7 +87,7 @@ export default function Register() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="username" className="block text-sm font-medium text-slate-700">
                 Username *
               </label>
               <input
@@ -92,7 +95,7 @@ export default function Register() {
                 name="username"
                 type="text"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Username"
                 value={formData.username}
                 onChange={handleChange}
@@ -100,7 +103,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
                 Email address *
               </label>
               <input
@@ -109,7 +112,7 @@ export default function Register() {
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -117,14 +120,14 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="fullName" className="block text-sm font-medium text-slate-700">
                 Full Name
               </label>
               <input
                 id="fullName"
                 name="fullName"
                 type="text"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Full Name (optional)"
                 value={formData.fullName}
                 onChange={handleChange}
@@ -132,14 +135,14 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-slate-700">
                 Phone Number
               </label>
               <input
                 id="phoneNumber"
                 name="phoneNumber"
                 type="tel"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Phone Number (optional)"
                 value={formData.phoneNumber}
                 onChange={handleChange}
@@ -147,7 +150,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
                 Password *
               </label>
               <input
@@ -156,7 +159,7 @@ export default function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Password (min 6 characters)"
                 value={formData.password}
                 onChange={handleChange}
@@ -164,7 +167,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-slate-700">
                 Confirm Password *
               </label>
               <input
@@ -173,7 +176,7 @@ export default function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-800 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent sm:text-sm transition-all duration-200"
                 placeholder="Confirm Password"
                 value={formData.passwordConfirmation}
                 onChange={handleChange}
@@ -185,7 +188,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sky-500/25 transition-all duration-200"
             >
               {isLoading ? 'Creating account...' : 'Create account'}
             </button>

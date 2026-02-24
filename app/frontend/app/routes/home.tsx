@@ -3,8 +3,8 @@ import { useAuth } from "../lib/auth-context";
 
 export function meta() {
   return [
-    { title: "PRS Builder - Build Your Precision Rifle" },
-    { name: "description", content: "Build and plan your precision rifle setup with PRS Builder" },
+    { title: "Loadout Lab - Build Your Precision Rifle" },
+    { name: "description", content: "Build and plan your precision rifle setup with Loadout Lab" },
   ];
 }
 
@@ -13,35 +13,38 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="flex items-center space-x-3">
+          <div className="w-5 h-5 rounded-full bg-sky-500 animate-pulse"></div>
+          <div className="text-lg text-slate-600 font-medium">Loading...</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
       {/* Navigation */}
-      <nav className="bg-white dark:bg-gray-800 shadow">
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  🎯 PRS Builder
+                <h1 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
+                  🎯 Loadout Lab
                 </h1>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <div className="hidden sm:ml-8 sm:flex sm:space-x-6">
                 <Link
                   to="/components"
-                  className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
                 >
                   Components
                 </Link>
                 {isAuthenticated && (
                   <Link
                     to="/builds"
-                    className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
                   >
                     My Builds
                   </Link>
@@ -51,12 +54,12 @@ export default function Home() {
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    Welcome, {user?.username}
+                  <span className="text-sm text-slate-600">
+                    Welcome, <span className="font-medium text-slate-800">{user?.username}</span>
                   </span>
                   <button
                     onClick={logout}
-                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
                     Logout
                   </button>
@@ -65,13 +68,13 @@ export default function Home() {
                 <>
                   <Link
                     to="/login"
-                    className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-sm font-medium"
+                    className="text-slate-600 hover:text-slate-800 text-sm font-medium transition-colors"
                   >
                     Sign in
                   </Link>
                   <Link
                     to="/register"
-                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm hover:shadow transition-all"
                   >
                     Sign up
                   </Link>
@@ -83,35 +86,35 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+          <h2 className="text-4xl tracking-tight font-extrabold text-slate-800 sm:text-5xl md:text-6xl">
             <span className="block">Build Your</span>
-            <span className="block text-blue-600">Precision Rifle</span>
+            <span className="block bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">Precision Rifle</span>
           </h2>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600 md:text-xl">
             Plan, compare, and optimize your PRS, NRL, or precision rifle build. 
             Track weights, costs, and find the perfect components for your setup.
           </p>
-          <div className="mt-10 flex justify-center space-x-4">
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             {isAuthenticated ? (
               <Link
                 to="/builds"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 hover:shadow-xl transition-all"
               >
                 View My Builds
               </Link>
             ) : (
               <Link
                 to="/register"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 hover:shadow-xl transition-all"
               >
-                Get Started
+                Get Started Free
               </Link>
             )}
             <Link
               to="/components"
-              className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-xl text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all"
             >
               Browse Components
             </Link>
@@ -119,74 +122,56 @@ export default function Home() {
         </div>
 
         {/* Features Grid */}
-        <div className="mt-20">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-              <div className="p-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="text-3xl">🔧</span>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Component Database
-                    </h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Browse actions, barrels, stocks, triggers, scopes, and more from top manufacturers.
-                    </p>
-                  </div>
-                </div>
+        <div className="mt-24">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center mb-5">
+                <span className="text-2xl">🔧</span>
               </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                Component Database
+              </h3>
+              <p className="text-slate-600">
+                Browse actions, barrels, stocks, triggers, scopes, and more from top manufacturers.
+              </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-              <div className="p-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="text-3xl">⚖️</span>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Weight Tracking
-                    </h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Keep track of your total build weight to stay within competition limits.
-                    </p>
-                  </div>
-                </div>
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5">
+                <span className="text-2xl">⚖️</span>
               </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                Weight Tracking
+              </h3>
+              <p className="text-slate-600">
+                Keep track of your total build weight to stay within competition limits.
+              </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-              <div className="p-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="text-3xl">💰</span>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Cost Calculator
-                    </h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Plan your budget and track total costs for your precision rifle build.
-                    </p>
-                  </div>
-                </div>
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5">
+                <span className="text-2xl">💰</span>
               </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                Cost Calculator
+              </h3>
+              <p className="text-slate-600">
+                Plan your budget and track total costs for your precision rifle build.
+              </p>
             </div>
           </div>
         </div>
 
         {/* Disciplines */}
-        <div className="mt-20">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
+        <div className="mt-24">
+          <h3 className="text-2xl font-bold text-slate-800 text-center mb-8">
             Supported Disciplines
           </h3>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             {['PRS', 'NRL', 'Benchrest', 'F-Class', 'Tactical', 'Hunting'].map((discipline) => (
               <span
                 key={discipline}
-                className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-sky-50 to-indigo-50 text-sky-700 border border-sky-100"
               >
                 {discipline}
               </span>
@@ -196,10 +181,10 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 mt-20">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            © 2026 PRS Builder. Built for precision rifle enthusiasts.
+      <footer className="bg-white border-t border-slate-100 mt-24">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-slate-500">
+            © 2026 Loadout Lab. Built for precision rifle enthusiasts.
           </p>
         </div>
       </footer>

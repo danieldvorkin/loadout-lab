@@ -1,0 +1,120 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
+    <p class="text-slate-600 mt-1">Overview of your Loadout Lab data</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">Total Users</p>
+          <p class="text-3xl font-bold text-slate-800 mt-1"><%= @users_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <a href="/admin/users" class="text-sm text-sky-600 hover:text-sky-700 mt-4 inline-block">View all →</a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">Components</p>
+          <p class="text-3xl font-bold text-slate-800 mt-1"><%= @components_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+          </svg>
+        </div>
+      </div>
+      <a href="/admin/components" class="text-sm text-sky-600 hover:text-sky-700 mt-4 inline-block">View all →</a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">Builds</p>
+          <p class="text-3xl font-bold text-slate-800 mt-1"><%= @builds_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">Manufacturers</p>
+          <p class="text-3xl font-bold text-slate-800 mt-1"><%= @manufacturers_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+      </div>
+      <a href="/admin/manufacturers" class="text-sm text-sky-600 hover:text-sky-700 mt-4 inline-block">View all →</a>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Users -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="text-lg font-semibold text-slate-800">Recent Users</h2>
+      </div>
+      <div class="divide-y divide-slate-100">
+        <% @recent_users.each do |user| %>
+          <div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div>
+              <p class="font-medium text-slate-800"><%= user.username %></p>
+              <p class="text-sm text-slate-500"><%= user.email %></p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="px-2 py-1 text-xs font-medium rounded-full <%= user.admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600' %>">
+                <%= user.role %>
+              </span>
+              <a href="/admin/users/<%= user.id %>" class="text-sm text-sky-600 hover:text-sky-700">View</a>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Builds -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="text-lg font-semibold text-slate-800">Recent Builds</h2>
+      </div>
+      <div class="divide-y divide-slate-100">
+        <% @recent_builds.each do |build| %>
+          <div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div>
+              <p class="font-medium text-slate-800"><%= build.name %></p>
+              <p class="text-sm text-slate-500">by <%= build.user.username %></p>
+            </div>
+            <div class="text-right">
+              <% if build.discipline %>
+                <span class="px-2 py-1 text-xs font-medium bg-sky-50 text-sky-700 rounded-full">
+                  <%= build.discipline %>
+                </span>
+              <% end %>
+              <p class="text-xs text-slate-400 mt-1"><%= time_ago_in_words(build.created_at) %> ago</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
