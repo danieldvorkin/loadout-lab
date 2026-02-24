@@ -5,6 +5,7 @@ export default [
   route("login", "routes/login.tsx"),
   route("register", "routes/register.tsx"),
   route("components", "routes/components.tsx"),
+  route("manufacturers", "routes/manufacturers.tsx"),
   route("builds", "routes/builds.tsx"),
   route("builds/:id", "routes/build-detail.tsx"),
   route("account", "routes/account/index.tsx"),

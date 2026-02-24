@@ -41,6 +41,12 @@ export default function Home() {
                 >
                   Components
                 </Link>
+                <Link
+                  to="/manufacturers"
+                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
+                >
+                  Manufacturers
+                </Link>
                 {isAuthenticated && (
                   <Link
                     to="/builds"
@@ -120,6 +126,12 @@ export default function Home() {
               className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-xl text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all"
             >
               Browse Components
+            </Link>
+            <Link
+              to="/manufacturers"
+              className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-xl text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all"
+            >
+              View Manufacturers
             </Link>
           </div>
         </div>
