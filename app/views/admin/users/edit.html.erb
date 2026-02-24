@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-6">
   <!-- Breadcrumb -->
   <nav class="flex items-center space-x-2 text-sm">
     <a href="/admin/users" class="text-sky-600 hover:text-sky-700">Users</a>
@@ -26,35 +26,87 @@
         </div>
       <% end %>
 
-      <div>
-        <label for="user_username" class="block text-sm font-medium text-slate-700 mb-1">Username</label>
-        <input type="text" name="user[username]" id="user_username" value="<%= @user.username %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+      <!-- Account Information Section -->
+      <div class="border-t pt-6">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">Account Information</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="user_username" class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+            <input type="text" name="user[username]" id="user_username" value="<%= @user.username %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_email" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <input type="email" name="user[email]" id="user_email" value="<%= @user.email %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_full_name" class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+            <input type="text" name="user[full_name]" id="user_full_name" value="<%= @user.full_name %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_phone_number" class="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+            <input type="text" name="user[phone_number]" id="user_phone_number" value="<%= @user.phone_number %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_role" class="block text-sm font-medium text-slate-700 mb-1">Role</label>
+            <select name="user[role]" id="user_role" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+              <option value="user" <%= 'selected' if @user.role == 'user' %>>User</option>
+              <option value="admin" <%= 'selected' if @user.role == 'admin' %>>Admin</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label for="user_email" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-        <input type="email" name="user[email]" id="user_email" value="<%= @user.email %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+      <!-- Profile Information Section -->
+      <div class="border-t pt-6">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">Profile Information</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="user_bio" class="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+            <textarea name="user[bio]" id="user_bio" rows="4" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"><%= @user.bio %></textarea>
+            <p class="text-xs text-slate-500 mt-1"><%= @user.bio.to_s.length %>/500 characters</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="user_location" class="block text-sm font-medium text-slate-700 mb-1">Location</label>
+              <input type="text" name="user[location]" id="user_location" value="<%= @user.location %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+            </div>
+
+            <div>
+              <label for="user_preferred_discipline" class="block text-sm font-medium text-slate-700 mb-1">Preferred Discipline</label>
+              <select name="user[preferred_discipline]" id="user_preferred_discipline" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                <option value="">Select a discipline</option>
+                <option value="f-class" <%= 'selected' if @user.preferred_discipline == 'f-class' %>>F-Class</option>
+                <option value="palma" <%= 'selected' if @user.preferred_discipline == 'palma' %>>Palma</option>
+                <option value="benchrest" <%= 'selected' if @user.preferred_discipline == 'benchrest' %>>Benchrest</option>
+                <option value="long-range" <%= 'selected' if @user.preferred_discipline == 'long-range' %>>Long Range</option>
+                <option value="silhouette" <%= 'selected' if @user.preferred_discipline == 'silhouette' %>>Silhouette</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="user_website" class="block text-sm font-medium text-slate-700 mb-1">Website</label>
+            <input type="url" name="user[website]" id="user_website" value="<%= @user.website %>" placeholder="https://example.com" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_avatar_url" class="block text-sm font-medium text-slate-700 mb-1">Avatar URL</label>
+            <input type="url" name="user[avatar_url]" id="user_avatar_url" value="<%= @user.avatar_url %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label for="user_date_of_birth" class="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
+            <input type="date" name="user[date_of_birth]" id="user_date_of_birth" value="<%= @user.date_of_birth&.strftime('%Y-%m-%d') %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label for="user_full_name" class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-        <input type="text" name="user[full_name]" id="user_full_name" value="<%= @user.full_name %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
-      </div>
-
-      <div>
-        <label for="user_phone_number" class="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
-        <input type="text" name="user[phone_number]" id="user_phone_number" value="<%= @user.phone_number %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
-      </div>
-
-      <div>
-        <label for="user_role" class="block text-sm font-medium text-slate-700 mb-1">Role</label>
-        <select name="user[role]" id="user_role" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
-          <option value="user" <%= 'selected' if @user.role == 'user' %>>User</option>
-          <option value="admin" <%= 'selected' if @user.role == 'admin' %>>Admin</option>
-        </select>
-      </div>
-
-      <div class="flex items-center justify-end space-x-4 pt-4">
+      <div class="flex items-center justify-end space-x-4 pt-4 border-t">
         <a href="/admin/users/<%= @user.id %>" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">Cancel</a>
         <button type="submit" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all cursor-pointer">Update User</button>
       </div>

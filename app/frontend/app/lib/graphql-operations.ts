@@ -77,6 +77,17 @@ export const GET_CURRENT_USER = gql`
       username
       fullName
       phoneNumber
+      bio
+      location
+      avatarUrl
+      dateOfBirth
+      preferredDiscipline
+      website
+      socialLinks
+      notificationPreferences
+      isOauthUser
+      provider
+      buildsCount
       createdAt
     }
   }

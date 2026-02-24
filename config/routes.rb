@@ -12,9 +12,9 @@ Rails.application.routes.draw do
     delete 'logout', to: 'sessions#destroy'
     
     get '/', to: 'dashboard#index', as: :dashboard
-    resources :users, except: [:new, :create]
-    resources :components
-    resources :manufacturers
+    resources :users, only: [:index, :show, :edit, :update, :destroy]
+    resources :components, only: [:index, :show, :edit, :update, :destroy, :new, :create]
+    resources :manufacturers, only: [:index, :show, :edit, :update, :destroy, :new, :create]
     resources :builds, only: [:index, :show, :destroy]
   end
 
