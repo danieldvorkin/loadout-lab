@@ -36,6 +36,9 @@ module Types
     # Dope data
     field :ballistic_drops, [Types::BallisticDropType], null: false
 
+    # Load development / charge tests
+    field :load_tests, [Types::LoadTestType], null: false
+
     # Constants
     field :available_calibers, [String], null: false
 

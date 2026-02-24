@@ -486,6 +486,17 @@ export const GET_BALLISTIC_PROFILES = gql`
         isVerified
         notes
       }
+      loadTests {
+        id
+        chargeGrains
+        velocityFps
+        groupSizeMoa
+        groupSizeInches
+        distanceYards
+        notes
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
@@ -544,6 +555,17 @@ export const GET_BALLISTIC_PROFILE = gql`
         timeOfFlightSec
         isVerified
         notes
+      }
+      loadTests {
+        id
+        chargeGrains
+        velocityFps
+        groupSizeMoa
+        groupSizeInches
+        distanceYards
+        notes
+        createdAt
+        updatedAt
       }
     }
   }
@@ -842,6 +864,55 @@ export const GENERATE_DOPE_TABLE = gql`
           notes
         }
       }
+      errors
+    }
+  }
+`;
+
+// ============================================
+// Load Test Mutations
+// ============================================
+
+export const UPSERT_LOAD_TEST = gql`
+  mutation UpsertLoadTest(
+    $ballisticProfileId: ID!
+    $id: ID
+    $chargeGrains: Float
+    $velocityFps: Int
+    $groupSizeMoa: Float
+    $groupSizeInches: Float
+    $distanceYards: Int
+    $notes: String
+  ) {
+    upsertLoadTest(
+      input: {
+        ballisticProfileId: $ballisticProfileId
+        id: $id
+        chargeGrains: $chargeGrains
+        velocityFps: $velocityFps
+        groupSizeMoa: $groupSizeMoa
+        groupSizeInches: $groupSizeInches
+        distanceYards: $distanceYards
+        notes: $notes
+      }
+    ) {
+      id
+      chargeGrains
+      velocityFps
+      groupSizeMoa
+      groupSizeInches
+      distanceYards
+      notes
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_LOAD_TEST = gql`
+  mutation DeleteLoadTest($id: ID!) {
+    deleteLoadTest(input: { id: $id }) {
+      success
       errors
     }
   }

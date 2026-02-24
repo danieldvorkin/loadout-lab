@@ -13,6 +13,26 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
+  SimpleCov.start 'rails' do
+    enable_coverage :branch
+
+    # Ignore non-core backend surfaces when measuring coverage
+    add_filter '/spec/'
+    add_filter '/config/'
+    add_filter '/bin/'
+    add_filter '/app/controllers/admin/'
+    add_filter '/app/jobs/'
+    add_filter '/app/mailers/'
+    add_filter '/app/services/product_scraper.rb'
+    add_filter '/app/graphql/resolvers/base_resolver.rb'
+
+    minimum_coverage 55
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

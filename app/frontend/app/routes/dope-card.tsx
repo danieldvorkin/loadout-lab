@@ -9,6 +9,8 @@ import {
   DELETE_BALLISTIC_DROP,
   BULK_UPSERT_BALLISTIC_DROPS,
   GENERATE_DOPE_TABLE,
+  UPSERT_LOAD_TEST,
+  DELETE_LOAD_TEST,
 } from '../lib/graphql-operations';
 
 interface BallisticDrop {
@@ -24,6 +26,16 @@ interface BallisticDrop {
   energyFtLbs: number | null;
   timeOfFlightSec: number | null;
   isVerified: boolean | null;
+  notes: string | null;
+}
+
+interface LoadTest {
+  id: string;
+  chargeGrains: number | null;
+  velocityFps: number | null;
+  groupSizeMoa: number | null;
+  groupSizeInches: number | null;
+  distanceYards: number | null;
   notes: string | null;
 }
 
@@ -63,6 +75,7 @@ interface BallisticProfile {
   updatedAt: string;
   build: { id: string; name: string };
   ballisticDrops: BallisticDrop[];
+  loadTests: LoadTest[];
 }
 
 interface ProfileData {
@@ -81,6 +94,19 @@ export default function DopeCard() {
   const [showGeneratePanel, setShowGeneratePanel] = useState(false);
   const [editingDropId, setEditingDropId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
+
+  // Load test UI state
+  const [showLoadTests, setShowLoadTests] = useState(false);
+  const [editingLoadTestId, setEditingLoadTestId] = useState<string | null>(null);
+  const [loadTestForm, setLoadTestForm] = useState({
+    id: '' as string | null,
+    chargeGrains: '',
+    velocityFps: '',
+    groupSizeInches: '',
+    groupSizeMoa: '',
+    distanceYards: '',
+    notes: '',
+  });
 
   // New drop form
   const [newDrop, setNewDrop] = useState({
@@ -163,6 +189,26 @@ export default function DopeCard() {
 
   const profile = data?.ballisticProfile;
 
+  const [upsertLoadTest, { loading: savingLoadTest }] = useMutation(UPSERT_LOAD_TEST, {
+    onCompleted: () => {
+      setEditingLoadTestId(null);
+      setLoadTestForm({
+        id: null,
+        chargeGrains: '',
+        velocityFps: '',
+        groupSizeInches: '',
+        groupSizeMoa: '',
+        distanceYards: '',
+        notes: '',
+      });
+      refetch();
+    },
+  });
+
+  const [deleteLoadTest] = useMutation(DELETE_LOAD_TEST, {
+    onCompleted: () => refetch(),
+  });
+
   const startEditDrop = useCallback((drop: BallisticDrop) => {
     setEditingDropId(drop.id);
     setEditDrop({
@@ -215,6 +261,15 @@ export default function DopeCard() {
   }
 
   const drops = profile.ballisticDrops || [];
+
+  const sortedLoadTests = [...(profile.loadTests || [])].sort((a, b) => {
+    const ca = a.chargeGrains ?? 0;
+    const cb = b.chargeGrains ?? 0;
+    if (ca !== cb) return ca - cb;
+    const da = a.distanceYards ?? 0;
+    const db = b.distanceYards ?? 0;
+    return da - db;
+  });
 
   const handleSaveNewDrop = (e: React.FormEvent) => {
     e.preventDefault();
@@ -309,6 +364,58 @@ export default function DopeCard() {
   const getWindageValue = (drop: BallisticDrop) => {
     if (unit === 'moa') return drop.windageMoa;
     return drop.windageMils;
+  };
+
+  const startNewLoadTest = () => {
+    setEditingLoadTestId(null);
+    setLoadTestForm({
+      id: null,
+      chargeGrains: '',
+      velocityFps: '',
+      groupSizeInches: '',
+      groupSizeMoa: '',
+      distanceYards: '',
+      notes: '',
+    });
+    setShowLoadTests(true);
+  };
+
+  const startEditLoadTest = (test: LoadTest) => {
+    setEditingLoadTestId(test.id);
+    setLoadTestForm({
+      id: test.id,
+      chargeGrains: test.chargeGrains !== null ? String(test.chargeGrains) : '',
+      velocityFps: test.velocityFps !== null ? String(test.velocityFps) : '',
+      groupSizeInches: test.groupSizeInches !== null ? String(test.groupSizeInches) : '',
+      groupSizeMoa: test.groupSizeMoa !== null ? String(test.groupSizeMoa) : '',
+      distanceYards: test.distanceYards !== null ? String(test.distanceYards) : '',
+      notes: test.notes || '',
+    });
+    setShowLoadTests(true);
+  };
+
+  const handleSaveLoadTest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profile) return;
+
+    upsertLoadTest({
+      variables: {
+        ballisticProfileId: profile.id,
+        id: loadTestForm.id || null,
+        chargeGrains: loadTestForm.chargeGrains ? parseFloat(loadTestForm.chargeGrains) : null,
+        velocityFps: loadTestForm.velocityFps ? parseInt(loadTestForm.velocityFps, 10) : null,
+        groupSizeInches: loadTestForm.groupSizeInches ? parseFloat(loadTestForm.groupSizeInches) : null,
+        groupSizeMoa: loadTestForm.groupSizeMoa ? parseFloat(loadTestForm.groupSizeMoa) : null,
+        distanceYards: loadTestForm.distanceYards ? parseInt(loadTestForm.distanceYards, 10) : null,
+        notes: loadTestForm.notes || null,
+      },
+    });
+  };
+
+  const handleDeleteLoadTest = (id: string) => {
+    if (window.confirm('Delete this load test entry?')) {
+      deleteLoadTest({ variables: { id } });
+    }
   };
 
   return (
@@ -716,6 +823,166 @@ export default function DopeCard() {
                   ))}
                 </div>
               </>
+            )}
+          </div>
+
+          {/* Load Development / Charge Tests */}
+          <div className="mt-6 bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-800">Load Development</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Track charge weights, velocities, and group sizes for this profile.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowLoadTests((v) => !v)}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  {showLoadTests ? 'Hide' : 'Show'} Tests
+                </button>
+                <button
+                  onClick={startNewLoadTest}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-sm transition-all"
+                >
+                  + Add Test
+                </button>
+              </div>
+            </div>
+
+            {showLoadTests && (
+              <div className="px-6 py-4 space-y-4">
+                {/* Load test form */}
+                <form onSubmit={handleSaveLoadTest} className="space-y-3">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Charge (gr)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={loadTestForm.chargeGrains}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, chargeGrains: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Distance (yds)</label>
+                      <input
+                        type="number"
+                        value={loadTestForm.distanceYards}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, distanceYards: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Velocity (fps)</label>
+                      <input
+                        type="number"
+                        value={loadTestForm.velocityFps}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, velocityFps: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Group (in)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={loadTestForm.groupSizeInches}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, groupSizeInches: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Group (MOA)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={loadTestForm.groupSizeMoa}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, groupSizeMoa: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Notes</label>
+                      <input
+                        type="text"
+                        value={loadTestForm.notes}
+                        onChange={(e) => setLoadTestForm({ ...loadTestForm, notes: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="submit"
+                      disabled={savingLoadTest}
+                      className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-50 transition-colors"
+                    >
+                      {savingLoadTest ? 'Saving...' : editingLoadTestId ? 'Update Test' : 'Save Test'}
+                    </button>
+                    {editingLoadTestId && (
+                      <button
+                        type="button"
+                        onClick={startNewLoadTest}
+                        className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 transition-colors"
+                      >
+                        Cancel Edit
+                      </button>
+                    )}
+                  </div>
+                </form>
+
+                {/* Existing tests */}
+                {sortedLoadTests.length === 0 ? (
+                  <p className="text-sm text-slate-500">No load tests recorded yet. Add your first ladder or group test above.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-slate-100 text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Charge (gr)</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Dist (yds)</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Vel (fps)</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Group (in)</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Group (MOA)</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
+                          <th className="px-3 py-2 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {sortedLoadTests.map((test) => (
+                          <tr key={test.id} className="hover:bg-sky-50/40">
+                            <td className="px-3 py-2 font-mono text-slate-800">{test.chargeGrains ?? '—'}</td>
+                            <td className="px-3 py-2 font-mono text-slate-600">{test.distanceYards ?? '—'}</td>
+                            <td className="px-3 py-2 font-mono text-slate-600">{test.velocityFps ?? '—'}</td>
+                            <td className="px-3 py-2 font-mono text-slate-600">{test.groupSizeInches ?? '—'}</td>
+                            <td className="px-3 py-2 font-mono text-slate-600">{test.groupSizeMoa ?? '—'}</td>
+                            <td className="px-3 py-2 text-slate-600">{test.notes ?? '—'}</td>
+                            <td className="px-3 py-2 text-right">
+                              <div className="inline-flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => startEditLoadTest(test)}
+                                  className="px-2 py-1 text-xs text-sky-600 hover:text-sky-700 font-medium"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteLoadTest(test.id)}
+                                  className="px-2 py-1 text-xs text-red-500 hover:text-red-600 font-medium"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

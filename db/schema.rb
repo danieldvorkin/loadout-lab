@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_163344) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -98,6 +98,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_163344) do
     t.index ["type"], name: "index_components_on_type"
   end
 
+  create_table "load_tests", force: :cascade do |t|
+    t.bigint "ballistic_profile_id", null: false
+    t.decimal "charge_grains", precision: 6, scale: 2
+    t.datetime "created_at", null: false
+    t.integer "distance_yards"
+    t.decimal "group_size_inches", precision: 6, scale: 3
+    t.decimal "group_size_moa", precision: 6, scale: 3
+    t.string "notes"
+    t.datetime "updated_at", null: false
+    t.integer "velocity_fps"
+    t.index ["ballistic_profile_id", "charge_grains", "distance_yards"], name: "idx_load_tests_on_profile_charge_distance"
+    t.index ["ballistic_profile_id"], name: "index_load_tests_on_ballistic_profile_id"
+  end
+
   create_table "manufacturers", force: :cascade do |t|
     t.string "country"
     t.datetime "created_at", null: false
@@ -161,4 +175,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_163344) do
   add_foreign_key "build_components", "components"
   add_foreign_key "builds", "users"
   add_foreign_key "components", "manufacturers"
+  add_foreign_key "load_tests", "ballistic_profiles"
 end

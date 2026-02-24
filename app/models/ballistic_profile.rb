@@ -4,6 +4,7 @@ class BallisticProfile < ApplicationRecord
   belongs_to :build
   belongs_to :projectile, optional: true
   has_many :ballistic_drops, -> { order(:distance_yards) }, dependent: :destroy
+  has_many :load_tests, dependent: :destroy
 
   validates :name, presence: true
   validates :caliber, presence: true
@@ -47,18 +48,33 @@ class BallisticProfile < ApplicationRecord
     ActiveRecord::Base.transaction do
       results.map do |result|
         drop = ballistic_drops.find_or_initialize_by(distance_yards: result.distance_yards)
-        drop.assign_attributes(
-          drop_inches: result.drop_inches,
-          drop_moa: result.drop_moa,
-          drop_mils: result.drop_mils,
-          windage_inches: result.windage_inches,
-          windage_moa: result.windage_moa,
-          windage_mils: result.windage_mils,
-          velocity_fps: result.velocity_fps,
-          energy_ft_lbs: result.energy_ft_lbs,
-          time_of_flight_sec: result.time_of_flight_sec,
-          is_verified: drop.persisted? ? drop.is_verified : false
-        )
+        if drop.persisted? && drop.is_verified
+          # For verified rows, keep the shooter-verified values and only
+          # backfill any missing ballistic fields from the calculator.
+          drop.drop_inches ||= result.drop_inches
+          drop.drop_moa ||= result.drop_moa
+          drop.drop_mils ||= result.drop_mils
+          drop.windage_inches ||= result.windage_inches
+          drop.windage_moa ||= result.windage_moa
+          drop.windage_mils ||= result.windage_mils
+          drop.velocity_fps ||= result.velocity_fps
+          drop.energy_ft_lbs ||= result.energy_ft_lbs
+          drop.time_of_flight_sec ||= result.time_of_flight_sec
+        else
+          # For new or unverified rows, fully replace with calculated data.
+          drop.assign_attributes(
+            drop_inches: result.drop_inches,
+            drop_moa: result.drop_moa,
+            drop_mils: result.drop_mils,
+            windage_inches: result.windage_inches,
+            windage_moa: result.windage_moa,
+            windage_mils: result.windage_mils,
+            velocity_fps: result.velocity_fps,
+            energy_ft_lbs: result.energy_ft_lbs,
+            time_of_flight_sec: result.time_of_flight_sec,
+            is_verified: drop.persisted? ? drop.is_verified : false
+          )
+        end
         drop.save!
         drop
       end

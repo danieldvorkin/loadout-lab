@@ -114,11 +114,18 @@ RSpec.describe BallisticProfile, type: :model do
     it "preserves verified status on regeneration" do
       profile.generate_dope_table!(max_distance: 300, step: 100)
       drop_200 = profile.ballistic_drops.find_by(distance_yards: 200)
-      drop_200.update!(is_verified: true)
+      drop_200.update!(
+        is_verified: true,
+        drop_moa: 5.0,
+        velocity_fps: 2550
+      )
 
       profile.generate_dope_table!(max_distance: 300, step: 100)
       drop_200.reload
       expect(drop_200.is_verified).to be true
+      # Our custom/verified values should not be overwritten by the calculator
+      expect(drop_200.drop_moa).to eq(5.0)
+      expect(drop_200.velocity_fps).to eq(2550)
     end
   end
 

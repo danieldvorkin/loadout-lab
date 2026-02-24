@@ -33,5 +33,9 @@ module Types
 
     # Ballistic calculator
     field :generate_dope_table, mutation: Mutations::GenerateDopeTable
+
+    # Load test mutations
+    field :upsert_load_test, mutation: Mutations::UpsertLoadTest
+    field :delete_load_test, mutation: Mutations::DeleteLoadTest
   end
 end
