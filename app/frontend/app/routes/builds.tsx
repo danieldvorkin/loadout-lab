@@ -40,11 +40,17 @@ export default function Builds() {
   });
 
   const [createBuild, { loading: creating }] = useMutation(CREATE_BUILD, {
-    onCompleted: () => {
+    onCompleted: (rawData) => {
       setShowCreateForm(false);
       setNewBuildName('');
       setNewBuildDiscipline('');
-      refetch();
+      // Navigate directly to the new build so the user gets the onboarding experience
+      const data = rawData as { createBuild?: { id: string } } | undefined;
+      if (data?.createBuild?.id) {
+        navigate(`/builds/${data.createBuild.id}`);
+      } else {
+        refetch();
+      }
     },
   });
 
@@ -249,18 +255,37 @@ export default function Builds() {
                         </svg>
                       </button>
                     </div>
-                    <div className="mt-5 space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Total Weight:</span>
-                        <span className="text-slate-800 font-medium">{formatWeight(build.totalWeightOz)}</span>
+                    {/* Completion progress */}
+                    {(() => {
+                      const positions = ['action','barrel','trigger','chassis','stock','scope','mount','rings','muzzle_device','bipod','grip','magazine','buttpad','cheek_riser'];
+                      const filled = new Set(build.buildComponents.map(bc => bc.position).filter(Boolean));
+                      const hasPlatform = filled.has('chassis') || filled.has('stock');
+                      const total = hasPlatform ? 13 : 14;
+                      const count = positions.filter(p => filled.has(p)).length;
+                      const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                      return (
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between text-xs mb-1.5">
+                            <span className="text-slate-500 font-medium">{count}/{total} slots filled</span>
+                            <span className="text-slate-400">{pct}%</span>
+                          </div>
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${count === total ? 'bg-gradient-to-r from-emerald-500 to-green-500' : 'bg-gradient-to-r from-sky-500 to-indigo-500'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="text-xs">
+                        <span className="text-slate-400">Weight</span>
+                        <div className="font-semibold text-slate-700">{formatWeight(build.totalWeightOz)}</div>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Total Cost:</span>
-                        <span className="text-slate-800 font-medium">{formatPrice(build.totalCostCents)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Components:</span>
-                        <span className="text-slate-800 font-medium">{build.buildComponents.length}</span>
+                      <div className="text-xs text-right">
+                        <span className="text-slate-400">Cost</span>
+                        <div className="font-semibold text-slate-700">{formatPrice(build.totalCostCents)}</div>
                       </div>
                     </div>
                     <div className="mt-5 pt-5 border-t border-slate-100">

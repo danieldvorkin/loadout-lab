@@ -234,6 +234,7 @@ export const GET_BUILD = gql`
           type
           weightOz
           msrpCents
+          imageUrl
           manufacturer {
             id
             name
