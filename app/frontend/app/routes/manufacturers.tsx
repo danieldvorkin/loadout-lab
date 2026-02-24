@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client/react';
 import { Link } from 'react-router';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GET_MANUFACTURERS } from '../lib/graphql-operations';
+import Pagination from '../components/Pagination';
 
 interface Manufacturer {
   id: string;
@@ -20,6 +21,8 @@ export default function Manufacturers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'country'>('name');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
 
   const manufacturers = data?.manufacturers || [];
 
@@ -56,6 +59,17 @@ export default function Manufacturers() {
     return sorted;
   }, [filteredManufacturers, sortBy]);
 
+  // Reset to page 1 when filters or sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCountry, sortBy, perPage]);
+
+  // Paginate
+  const paginatedManufacturers = useMemo(() => {
+    const start = (currentPage - 1) * perPage;
+    return sortedManufacturers.slice(start, start + perPage);
+  }, [sortedManufacturers, currentPage, perPage]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
@@ -83,6 +97,9 @@ export default function Manufacturers() {
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">Manufacturers</h1>
             <p className="text-slate-600 mt-2">{sortedManufacturers.length} of {manufacturers.length} manufacturers</p>
+            {sortedManufacturers.length !== manufacturers.length && (
+              <p className="text-slate-500 text-sm">Filtered from {manufacturers.length} total</p>
+            )}
           </div>
           <Link
             to="/"
@@ -196,7 +213,7 @@ export default function Manufacturers() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {sortedManufacturers.map((manufacturer) => (
+                    {paginatedManufacturers.map((manufacturer) => (
                       <tr
                         key={manufacturer.id}
                         className="hover:bg-sky-50/50 transition-colors"
@@ -251,7 +268,7 @@ export default function Manufacturers() {
 
             {/* Mobile View - Cards */}
             <div className="md:hidden grid grid-cols-1 gap-4">
-              {sortedManufacturers.map((manufacturer) => (
+              {paginatedManufacturers.map((manufacturer) => (
                 <div
                   key={manufacturer.id}
                   className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
@@ -304,6 +321,15 @@ export default function Manufacturers() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={sortedManufacturers.length}
+              perPage={perPage}
+              onPageChange={setCurrentPage}
+              onPerPageChange={setPerPage}
+            />
           </>
         )}
       </div>

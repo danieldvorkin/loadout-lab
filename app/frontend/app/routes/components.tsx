@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client/react';
 import { Link } from 'react-router';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GET_COMPONENTS } from '../lib/graphql-operations';
+import Pagination from '../components/Pagination';
 
 interface Component {
   id: string;
@@ -30,6 +31,8 @@ export default function Components() {
   const [selectedManufacturer, setSelectedManufacturer] = useState<string | null>(null);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'price' | 'weight'>('name');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
 
   const components = data?.components || [];
 
@@ -76,6 +79,17 @@ export default function Components() {
     return sorted;
   }, [filteredComponents, sortBy]);
 
+  // Reset to page 1 when filters or sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedType, selectedManufacturer, showAvailableOnly, sortBy, perPage]);
+
+  // Paginate
+  const paginatedComponents = useMemo(() => {
+    const start = (currentPage - 1) * perPage;
+    return sortedComponents.slice(start, start + perPage);
+  }, [sortedComponents, currentPage, perPage]);
+
   const formatPrice = (cents: number | null) => {
     if (cents === null) return 'N/A';
     return new Intl.NumberFormat('en-US', {
@@ -116,6 +130,9 @@ export default function Components() {
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">Components</h1>
             <p className="text-slate-600 mt-2">{sortedComponents.length} of {components.length} components</p>
+            {sortedComponents.length !== components.length && (
+              <p className="text-slate-500 text-sm">Filtered from {components.length} total</p>
+            )}
           </div>
           <Link
             to="/"
@@ -272,7 +289,7 @@ export default function Components() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {sortedComponents.map((component) => (
+                    {paginatedComponents.map((component) => (
                       <tr
                         key={component.id}
                         className="hover:bg-sky-50/50 transition-colors"
@@ -337,7 +354,7 @@ export default function Components() {
 
             {/* Mobile View - Cards */}
             <div className="md:hidden grid grid-cols-1 gap-4">
-              {sortedComponents.map((component) => (
+              {paginatedComponents.map((component) => (
                 <div
                   key={component.id}
                   className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
@@ -405,6 +422,15 @@ export default function Components() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={sortedComponents.length}
+              perPage={perPage}
+              onPageChange={setCurrentPage}
+              onPerPageChange={setPerPage}
+            />
           </>
         )}
       </div>
