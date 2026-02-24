@@ -433,3 +433,413 @@ export const GET_USER_PROFILE = gql`
     }
   }
 `;
+
+// ============================================
+// Ballistic Profile Queries
+// ============================================
+
+export const GET_BALLISTIC_PROFILES = gql`
+  query GetBallisticProfiles($buildId: ID!) {
+    ballisticProfiles(buildId: $buildId) {
+      id
+      name
+      caliber
+      bulletWeightGrains
+      bulletBc
+      bcType
+      muzzleVelocityFps
+      zeroDistanceYards
+      sightHeightInches
+      twistRate
+      barrelLengthInches
+      altitudeFeet
+      temperatureF
+      humidityPercent
+      pressureInhg
+      windSpeedMph
+      windAngleDegrees
+      notes
+      projectileId
+      projectile {
+        id
+        manufacturer
+        name
+        displayName
+      }
+      createdAt
+      updatedAt
+      ballisticDrops {
+        id
+        distanceYards
+        dropMoa
+        dropMils
+        dropInches
+        windageMoa
+        windageMils
+        windageInches
+        velocityFps
+        energyFtLbs
+        timeOfFlightSec
+        isVerified
+        notes
+      }
+    }
+  }
+`;
+
+export const GET_BALLISTIC_PROFILE = gql`
+  query GetBallisticProfile($id: ID!) {
+    ballisticProfile(id: $id) {
+      id
+      name
+      caliber
+      bulletWeightGrains
+      bulletBc
+      bcType
+      muzzleVelocityFps
+      zeroDistanceYards
+      sightHeightInches
+      twistRate
+      barrelLengthInches
+      altitudeFeet
+      temperatureF
+      humidityPercent
+      pressureInhg
+      windSpeedMph
+      windAngleDegrees
+      notes
+      projectileId
+      projectile {
+        id
+        manufacturer
+        name
+        displayName
+        weightGrains
+        bcG1
+        bcG7
+        baseType
+        bulletType
+      }
+      availableCalibers
+      createdAt
+      updatedAt
+      build {
+        id
+        name
+      }
+      ballisticDrops {
+        id
+        distanceYards
+        dropMoa
+        dropMils
+        dropInches
+        windageMoa
+        windageMils
+        windageInches
+        velocityFps
+        energyFtLbs
+        timeOfFlightSec
+        isVerified
+        notes
+      }
+    }
+  }
+`;
+
+export const GET_CALIBERS = gql`
+  query GetCalibers {
+    calibers
+  }
+`;
+
+// ============================================
+// Projectile Queries
+// ============================================
+
+export const GET_PROJECTILES = gql`
+  query GetProjectiles($caliber: String, $caliberInches: Float, $manufacturer: String) {
+    projectiles(caliber: $caliber, caliberInches: $caliberInches, manufacturer: $manufacturer) {
+      id
+      manufacturer
+      name
+      caliberInches
+      weightGrains
+      bcG1
+      bcG7
+      bulletType
+      baseType
+      recommendedTwist
+      displayName
+    }
+  }
+`;
+
+export const GET_PROJECTILE_MANUFACTURERS = gql`
+  query GetProjectileManufacturers {
+    projectileManufacturers
+  }
+`;
+
+export const GET_CARTRIDGE_DIAMETERS = gql`
+  query GetCartridgeDiameters {
+    cartridgeDiameters
+  }
+`;
+
+// ============================================
+// Ballistic Profile Mutations
+// ============================================
+
+export const CREATE_BALLISTIC_PROFILE = gql`
+  mutation CreateBallisticProfile(
+    $buildId: ID!
+    $name: String!
+    $caliber: String!
+    $projectileId: ID
+    $bulletWeightGrains: Float
+    $bulletBc: Float
+    $bcType: String
+    $muzzleVelocityFps: Int
+    $zeroDistanceYards: Int
+    $sightHeightInches: Float
+    $twistRate: String
+    $barrelLengthInches: Float
+    $altitudeFeet: Int
+    $temperatureF: Int
+    $humidityPercent: Int
+    $pressureInhg: Float
+    $windSpeedMph: Int
+    $windAngleDegrees: Int
+    $notes: String
+  ) {
+    createBallisticProfile(
+      input: {
+        buildId: $buildId
+        name: $name
+        caliber: $caliber
+        projectileId: $projectileId
+        bulletWeightGrains: $bulletWeightGrains
+        bulletBc: $bulletBc
+        bcType: $bcType
+        muzzleVelocityFps: $muzzleVelocityFps
+        zeroDistanceYards: $zeroDistanceYards
+        sightHeightInches: $sightHeightInches
+        twistRate: $twistRate
+        barrelLengthInches: $barrelLengthInches
+        altitudeFeet: $altitudeFeet
+        temperatureF: $temperatureF
+        humidityPercent: $humidityPercent
+        pressureInhg: $pressureInhg
+        windSpeedMph: $windSpeedMph
+        windAngleDegrees: $windAngleDegrees
+        notes: $notes
+      }
+    ) {
+      id
+      name
+      caliber
+      projectileId
+      bulletWeightGrains
+      bulletBc
+      bcType
+      createdAt
+    }
+  }
+`;
+
+export const UPDATE_BALLISTIC_PROFILE = gql`
+  mutation UpdateBallisticProfile(
+    $id: ID!
+    $name: String
+    $caliber: String
+    $bulletWeightGrains: Float
+    $bulletBc: Float
+    $bcType: String
+    $muzzleVelocityFps: Int
+    $zeroDistanceYards: Int
+    $sightHeightInches: Float
+    $twistRate: String
+    $barrelLengthInches: Float
+    $altitudeFeet: Int
+    $temperatureF: Int
+    $humidityPercent: Int
+    $pressureInhg: Float
+    $windSpeedMph: Int
+    $windAngleDegrees: Int
+    $notes: String
+  ) {
+    updateBallisticProfile(
+      input: {
+        id: $id
+        name: $name
+        caliber: $caliber
+        bulletWeightGrains: $bulletWeightGrains
+        bulletBc: $bulletBc
+        bcType: $bcType
+        muzzleVelocityFps: $muzzleVelocityFps
+        zeroDistanceYards: $zeroDistanceYards
+        sightHeightInches: $sightHeightInches
+        twistRate: $twistRate
+        barrelLengthInches: $barrelLengthInches
+        altitudeFeet: $altitudeFeet
+        temperatureF: $temperatureF
+        humidityPercent: $humidityPercent
+        pressureInhg: $pressureInhg
+        windSpeedMph: $windSpeedMph
+        windAngleDegrees: $windAngleDegrees
+        notes: $notes
+      }
+    ) {
+      id
+      name
+      caliber
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_BALLISTIC_PROFILE = gql`
+  mutation DeleteBallisticProfile($id: ID!) {
+    deleteBallisticProfile(input: { id: $id }) {
+      success
+      errors
+    }
+  }
+`;
+
+// ============================================
+// Ballistic Drop Mutations
+// ============================================
+
+export const UPSERT_BALLISTIC_DROP = gql`
+  mutation UpsertBallisticDrop(
+    $ballisticProfileId: ID!
+    $distanceYards: Int!
+    $dropInches: Float
+    $dropMoa: Float
+    $dropMils: Float
+    $windageInches: Float
+    $windageMoa: Float
+    $windageMils: Float
+    $velocityFps: Int
+    $energyFtLbs: Int
+    $timeOfFlightSec: Float
+    $isVerified: Boolean
+    $notes: String
+  ) {
+    upsertBallisticDrop(
+      input: {
+        ballisticProfileId: $ballisticProfileId
+        distanceYards: $distanceYards
+        dropInches: $dropInches
+        dropMoa: $dropMoa
+        dropMils: $dropMils
+        windageInches: $windageInches
+        windageMoa: $windageMoa
+        windageMils: $windageMils
+        velocityFps: $velocityFps
+        energyFtLbs: $energyFtLbs
+        timeOfFlightSec: $timeOfFlightSec
+        isVerified: $isVerified
+        notes: $notes
+      }
+    ) {
+      id
+      distanceYards
+      dropMoa
+      dropMils
+      dropInches
+      windageMoa
+      windageMils
+      windageInches
+      velocityFps
+      energyFtLbs
+      timeOfFlightSec
+      isVerified
+      notes
+    }
+  }
+`;
+
+export const BULK_UPSERT_BALLISTIC_DROPS = gql`
+  mutation BulkUpsertBallisticDrops(
+    $ballisticProfileId: ID!
+    $drops: [DropInput!]!
+  ) {
+    bulkUpsertBallisticDrops(
+      input: {
+        ballisticProfileId: $ballisticProfileId
+        drops: $drops
+      }
+    ) {
+      ballisticProfile {
+        id
+        ballisticDrops {
+          id
+          distanceYards
+          dropMoa
+          dropMils
+          dropInches
+          windageMoa
+          windageMils
+          windageInches
+          velocityFps
+          energyFtLbs
+          timeOfFlightSec
+          isVerified
+          notes
+        }
+      }
+      errors
+    }
+  }
+`;
+
+export const DELETE_BALLISTIC_DROP = gql`
+  mutation DeleteBallisticDrop($id: ID!) {
+    deleteBallisticDrop(input: { id: $id }) {
+      success
+      errors
+    }
+  }
+`;
+
+// ============================================
+// Ballistic Calculator Mutations
+// ============================================
+
+export const GENERATE_DOPE_TABLE = gql`
+  mutation GenerateDopeTable(
+    $ballisticProfileId: ID!
+    $maxDistance: Int
+    $step: Int
+  ) {
+    generateDopeTable(
+      input: {
+        ballisticProfileId: $ballisticProfileId
+        maxDistance: $maxDistance
+        step: $step
+      }
+    ) {
+      ballisticProfile {
+        id
+        ballisticDrops {
+          id
+          distanceYards
+          dropMoa
+          dropMils
+          dropInches
+          windageMoa
+          windageMils
+          windageInches
+          velocityFps
+          energyFtLbs
+          timeOfFlightSec
+          isVerified
+          notes
+        }
+      }
+      errors
+    }
+  }
+`;

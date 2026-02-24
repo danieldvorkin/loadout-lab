@@ -8,6 +8,8 @@ export default [
   route("manufacturers", "routes/manufacturers.tsx"),
   route("builds", "routes/builds.tsx"),
   route("builds/:id", "routes/build-detail.tsx"),
+  route("builds/:id/ballistics", "routes/build-ballistics.tsx"),
+  route("builds/:id/ballistics/:profileId", "routes/dope-card.tsx"),
   route("account", "routes/account/index.tsx"),
   route("account/profile", "routes/account/profile.tsx"),
   route("account/security", "routes/account/security.tsx"),

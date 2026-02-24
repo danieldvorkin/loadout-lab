@@ -172,16 +172,27 @@ export default function BuildDetail() {
                 </span>
               )}
             </div>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all duration-200"
-            >
-              + Add Component
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/builds/${build.id}/ballistics`}
+                className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-500/25 transition-all duration-200"
+              >
+                <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Ballistics
+              </Link>
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/25 transition-all duration-200"
+              >
+                + Add Component
+              </button>
+            </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
               <h3 className="text-sm font-medium text-slate-500">Total Weight</h3>
               <p className="mt-2 text-2xl font-semibold text-slate-800">
@@ -200,6 +211,17 @@ export default function BuildDetail() {
                 {build.buildComponents.length}
               </p>
             </div>
+            <Link to={`/builds/${build.id}/ballistics`} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl shadow-sm border border-amber-100 p-6 hover:shadow-md hover:border-amber-200 transition-all group">
+              <h3 className="text-sm font-medium text-amber-600 flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Ballistics
+              </h3>
+              <p className="mt-2 text-2xl font-semibold text-amber-700">
+                Dope Cards →
+              </p>
+            </Link>
           </div>
 
           {/* Add Component Form */}

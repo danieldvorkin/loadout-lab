@@ -20,5 +20,18 @@ module Types
     # Build component mutations
     field :add_component_to_build, mutation: Mutations::AddComponentToBuild
     field :remove_component_from_build, mutation: Mutations::RemoveComponentFromBuild
+
+    # Ballistic profile mutations
+    field :create_ballistic_profile, mutation: Mutations::CreateBallisticProfile
+    field :update_ballistic_profile, mutation: Mutations::UpdateBallisticProfile
+    field :delete_ballistic_profile, mutation: Mutations::DeleteBallisticProfile
+
+    # Ballistic drop mutations
+    field :upsert_ballistic_drop, mutation: Mutations::UpsertBallisticDrop
+    field :delete_ballistic_drop, mutation: Mutations::DeleteBallisticDrop
+    field :bulk_upsert_ballistic_drops, mutation: Mutations::BulkUpsertBallisticDrops
+
+    # Ballistic calculator
+    field :generate_dope_table, mutation: Mutations::GenerateDopeTable
   end
 end

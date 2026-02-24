@@ -797,10 +797,17 @@ puts "=================================="
 puts "Manufacturers: #{Manufacturer.count}"
 puts "Components: #{Component.count}"
 puts "Users: #{User.count}"
+# =============================================================================
+# PROJECTILES (Bullet Catalog)
+# =============================================================================
+require_relative "seeds/projectiles"
+Seeds::Projectiles.seed!
+
 puts "  - Admins: #{User.admin.count}"
 puts "  - Regular Users: #{User.user.count}"
 puts "Builds: #{Build.count}"
 puts "Build Components: #{BuildComponent.count}"
+puts "Projectiles: #{Projectile.count}"
 puts "=================================="
 puts ""
 puts "Admin login credentials:"

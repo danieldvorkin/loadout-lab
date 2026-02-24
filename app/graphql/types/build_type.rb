@@ -10,6 +10,7 @@ module Types
     field :user, Types::UserType, null: false
     field :build_components, [Types::BuildComponentType], null: false
     field :components, [Types::ComponentType], null: false
+    field :ballistic_profiles, [Types::BallisticProfileType], null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

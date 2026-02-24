@@ -2,6 +2,7 @@ class Build < ApplicationRecord
   belongs_to :user
   has_many :build_components, dependent: :destroy
   has_many :components, through: :build_components
+  has_many :ballistic_profiles, dependent: :destroy
 
   validates :name, presence: true
 

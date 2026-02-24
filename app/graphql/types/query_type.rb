@@ -132,5 +132,76 @@ module Types
     def disciplines
       Build::DISCIPLINES
     end
+
+    # Get list of available calibers
+    field :calibers, [String], null: false, description: "Fetch list of common PRS/long-range calibers"
+
+    def calibers
+      BallisticProfile::CALIBERS
+    end
+
+    # Fetch projectiles with optional filtering by caliber/manufacturer
+    field :projectiles, [Types::ProjectileType], null: false,
+          description: "Fetch projectile catalog with optional caliber/manufacturer filtering" do
+      argument :caliber, String, required: false, description: "Filter by cartridge name (e.g., '6.5 Creedmoor')"
+      argument :caliber_inches, Float, required: false, description: "Filter by bullet diameter in inches"
+      argument :manufacturer, String, required: false, description: "Filter by manufacturer name"
+    end
+
+    def projectiles(caliber: nil, caliber_inches: nil, manufacturer: nil)
+      result = Projectile.ordered
+
+      if caliber.present?
+        result = result.where(caliber_inches: Projectile::CARTRIDGE_DIAMETER_MAP[caliber])
+      elsif caliber_inches.present?
+        result = result.by_caliber(caliber_inches)
+      end
+
+      result = result.by_manufacturer(manufacturer) if manufacturer.present?
+      result
+    end
+
+    # Get list of projectile manufacturers
+    field :projectile_manufacturers, [String], null: false,
+          description: "Fetch list of projectile manufacturers in the catalog"
+
+    def projectile_manufacturers
+      Projectile.available_manufacturers
+    end
+
+    # Get cartridge-to-diameter mapping
+    field :cartridge_diameters, GraphQL::Types::JSON, null: false,
+          description: "Fetch mapping of cartridge names to bullet diameters"
+
+    def cartridge_diameters
+      Projectile::CARTRIDGE_DIAMETER_MAP
+    end
+
+    # Fetch ballistic profiles for a build
+    field :ballistic_profiles, [Types::BallisticProfileType], null: false,
+          description: "Fetch ballistic profiles for a specific build" do
+      argument :build_id, ID, required: true
+    end
+
+    def ballistic_profiles(build_id:)
+      return [] unless context[:current_user]
+      build = context[:current_user].builds.find_by(id: build_id)
+      return [] unless build
+      build.ballistic_profiles.includes(:ballistic_drops).order(created_at: :desc)
+    end
+
+    # Fetch a single ballistic profile by ID
+    field :ballistic_profile, Types::BallisticProfileType, null: true,
+          description: "Fetch a single ballistic profile with all drop data" do
+      argument :id, ID, required: true
+    end
+
+    def ballistic_profile(id:)
+      return nil unless context[:current_user]
+      BallisticProfile.joins(build: :user)
+                      .where(builds: { user_id: context[:current_user].id })
+                      .includes(:ballistic_drops)
+                      .find_by(id: id)
+    end
   end
 end
