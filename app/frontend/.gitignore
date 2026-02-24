@@ -1,7 +1,16 @@
 .DS_Store
-.env
 /node_modules/
 
 # React Router
 /.react-router/
 /build/
+
+# Environment files (keep examples)
+.env
+.env.local
+.env.production
+!.env.example
+!.env.production.example
+
+# Netlify
+.netlify/

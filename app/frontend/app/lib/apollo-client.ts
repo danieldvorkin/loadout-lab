@@ -9,7 +9,9 @@ const getToken = (): string | null => {
   return localStorage.getItem('authToken');
 };
 
-const GRAPHQL_ENDPOINT = '/graphql';
+// Use environment variable for API URL, fallback to relative path for same-origin
+const API_URL = import.meta.env.VITE_API_URL || '';
+const GRAPHQL_ENDPOINT = `${API_URL}/graphql`;
 
 // HTTP link to the GraphQL endpoint
 const httpLink = createHttpLink({

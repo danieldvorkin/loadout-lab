@@ -9,7 +9,18 @@
 #     priority: 2
 #     schedule: at 5am every day
 
+# Sync products from all retailers daily at 3am
+default: &default
+  sync_products_daily:
+    class: SyncProductsJob
+    queue: default
+    schedule: at 3am every day
+
+development:
+  <<: *default
+
 production:
+  <<: *default
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12

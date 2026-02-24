@@ -13,6 +13,8 @@ gem "puma", ">= 5.0"
 # gem "bcrypt", "~> 3.1.7"
 
 gem 'graphql'
+gem 'graphiql-rails'
+gem 'sprockets-rails' # Required for GraphiQL assets in API-only mode
 gem 'devise'
 gem 'devise-jwt'
 gem 'rack-cors'

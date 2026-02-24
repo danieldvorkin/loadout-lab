@@ -1,0 +1,39 @@
+{
+  "name": "PRS Builder API",
+  "description": "A Rails API for building precision rifle configurations",
+  "repository": "https://github.com/danieldvorkin/prs_builder_api",
+  "keywords": ["rails", "graphql", "api", "precision-rifle"],
+  "stack": "heroku-24",
+  "env": {
+    "RAILS_ENV": {
+      "value": "production"
+    },
+    "RACK_ENV": {
+      "value": "production"
+    },
+    "RAILS_LOG_TO_STDOUT": {
+      "value": "enabled"
+    },
+    "RAILS_SERVE_STATIC_FILES": {
+      "value": "enabled"
+    },
+    "SECRET_KEY_BASE": {
+      "generator": "secret"
+    },
+    "DEVISE_JWT_SECRET_KEY": {
+      "generator": "secret"
+    },
+    "FRONTEND_URL": {
+      "description": "The URL of your Netlify frontend app",
+      "value": "https://loadoutlab.netlify.app"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "bundle exec rails db:migrate && bundle exec rails db:seed"
+  }
+}
