@@ -1,6 +1,26 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { useMutation, useQuery, useApolloClient } from '@apollo/client';
+import { useMutation, useQuery, useApolloClient } from '@apollo/client/react';
 import { LOGIN_USER, REGISTER_USER, GET_CURRENT_USER } from './graphql-operations';
+
+// Helper to safely access localStorage (not available during SSR)
+const isClient = typeof window !== 'undefined';
+
+const getToken = (): string | null => {
+  if (!isClient) return null;
+  return localStorage.getItem('authToken');
+};
+
+const setToken = (token: string): void => {
+  if (isClient) {
+    localStorage.setItem('authToken', token);
+  }
+};
+
+const removeToken = (): void => {
+  if (isClient) {
+    localStorage.removeItem('authToken');
+  }
+};
 
 interface User {
   id: string;
@@ -33,36 +53,40 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasToken, setHasToken] = useState(false);
   const client = useApolloClient();
 
   const [loginMutation] = useMutation(LOGIN_USER);
   const [registerMutation] = useMutation(REGISTER_USER);
 
+  // Check for token on client side only
+  useEffect(() => {
+    const token = getToken();
+    setHasToken(!!token);
+    if (!token) {
+      setIsLoading(false);
+    }
+  }, []);
+
   // Check for existing token on mount
   const { data: currentUserData, loading: currentUserLoading } = useQuery(GET_CURRENT_USER, {
-    skip: !localStorage.getItem('authToken'),
+    skip: !hasToken,
     onError: () => {
       // Token is invalid, clear it
-      localStorage.removeItem('authToken');
+      removeToken();
       setUser(null);
+      setIsLoading(false);
     },
   });
 
   useEffect(() => {
-    if (!currentUserLoading) {
+    if (hasToken && !currentUserLoading) {
       if (currentUserData?.currentUser) {
         setUser(currentUserData.currentUser);
       }
       setIsLoading(false);
     }
-  }, [currentUserData, currentUserLoading]);
-
-  // If no token, set loading to false
-  useEffect(() => {
-    if (!localStorage.getItem('authToken')) {
-      setIsLoading(false);
-    }
-  }, []);
+  }, [currentUserData, currentUserLoading, hasToken]);
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -71,8 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (data?.loginUser?.token && data?.loginUser?.user) {
-        localStorage.setItem('authToken', data.loginUser.token);
+        setToken(data.loginUser.token);
         setUser(data.loginUser.user);
+        setHasToken(true);
         // Reset Apollo cache to refetch queries with new auth
         await client.resetStore();
         return { success: true, errors: [] };
@@ -91,8 +116,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (responseData?.registerUser?.token && responseData?.registerUser?.user) {
-        localStorage.setItem('authToken', responseData.registerUser.token);
+        setToken(responseData.registerUser.token);
         setUser(responseData.registerUser.user);
+        setHasToken(true);
         // Reset Apollo cache to refetch queries with new auth
         await client.resetStore();
         return { success: true, errors: [] };
@@ -105,8 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [registerMutation, client]);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('authToken');
+    removeToken();
     setUser(null);
+    setHasToken(false);
     // Clear Apollo cache
     client.clearStore();
   }, [client]);

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Link } from 'react-router';
 import { GET_COMPONENTS } from '../lib/graphql-operations';
 

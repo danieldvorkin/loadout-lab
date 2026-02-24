@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { Link, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useAuth } from '../lib/auth-context';

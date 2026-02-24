@@ -1,7 +1,15 @@
-import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
 
-const GRAPHQL_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT || '/graphql';
+// Helper to safely access localStorage (not available during SSR)
+const isClient = typeof window !== 'undefined';
+
+const getToken = (): string | null => {
+  if (!isClient) return null;
+  return localStorage.getItem('authToken');
+};
+
+const GRAPHQL_ENDPOINT = '/graphql';
 
 // HTTP link to the GraphQL endpoint
 const httpLink = createHttpLink({
@@ -11,8 +19,8 @@ const httpLink = createHttpLink({
 
 // Auth link that adds the JWT token to requests
 const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage
-  const token = localStorage.getItem('authToken');
+  // Get the authentication token from local storage (only on client)
+  const token = getToken();
   
   // Return the headers to the context so httpLink can read them
   return {
@@ -53,9 +61,11 @@ export const apolloClient = new ApolloClient({
       },
     },
   }),
+  // SSR mode: disable features that require browser APIs
+  ssrMode: !isClient,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: isClient ? 'cache-and-network' : 'network-only',
     },
   },
 });
