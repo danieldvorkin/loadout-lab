@@ -138,6 +138,7 @@ export const GET_COMPONENTS = gql`
       weightOz
       msrpCents
       discontinued
+      imageUrl
       specs
       manufacturer {
         id
@@ -157,6 +158,7 @@ export const GET_COMPONENT = gql`
       weightOz
       msrpCents
       discontinued
+      imageUrl
       specs
       manufacturer {
         id
@@ -179,6 +181,7 @@ export const GET_MANUFACTURERS = gql`
       name
       website
       country
+      imageUrl
     }
   }
 `;

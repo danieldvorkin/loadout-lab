@@ -178,6 +178,9 @@ class SyncProductsJob < ApplicationJob
     # Extract weight if available
     weight_oz = extract_weight(product_data)
 
+    # Extract image URL
+    image_url = extract_image(product_data)
+
     # Build specs from product data
     specs = build_specs(product_data, retailer)
 
@@ -187,6 +190,7 @@ class SyncProductsJob < ApplicationJob
       manufacturer: manufacturer,
       msrp_cents: price_cents,
       weight_oz: weight_oz,
+      image_url: image_url,
       specs: specs,
       discontinued: false
     )
@@ -226,6 +230,15 @@ class SyncProductsJob < ApplicationJob
 
     # Convert grams to ounces
     (weight_grams / 28.3495).round(2)
+  end
+
+  def extract_image(product_data)
+    # Try the main product image first
+    image = product_data.dig("image", "src") || product_data.dig("images", 0, "src")
+    return image if image.present?
+
+    # Fallback to featured image
+    product_data["featured_image"].presence
   end
 
   def build_specs(product_data, retailer)

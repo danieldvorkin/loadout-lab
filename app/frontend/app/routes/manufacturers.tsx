@@ -8,6 +8,7 @@ interface Manufacturer {
   name: string;
   website: string;
   country: string;
+  imageUrl: string | null;
 }
 
 interface ManufacturersData {
@@ -180,6 +181,9 @@ export default function Manufacturers() {
                 <table className="w-full">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider w-16">
+                        
+                      </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                         Name
                       </th>
@@ -197,6 +201,20 @@ export default function Manufacturers() {
                         key={manufacturer.id}
                         className="hover:bg-sky-50/50 transition-colors"
                       >
+                        <td className="px-6 py-4 w-16">
+                          {manufacturer.imageUrl ? (
+                            <img
+                              src={manufacturer.imageUrl}
+                              alt={manufacturer.name}
+                              className="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white p-0.5"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-sky-100 rounded-lg flex items-center justify-center">
+                              <span className="text-xs font-bold text-indigo-400">{manufacturer.name.substring(0, 2).toUpperCase()}</span>
+                            </div>
+                          )}
+                        </td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-semibold text-slate-800">
                             {manufacturer.name}
@@ -239,13 +257,27 @@ export default function Manufacturers() {
                   className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3 gap-3">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
-                        {manufacturer.name}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-600 mt-1">
-                        {manufacturer.country}
-                      </p>
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      {manufacturer.imageUrl ? (
+                        <img
+                          src={manufacturer.imageUrl}
+                          alt={manufacturer.name}
+                          className="w-12 h-12 object-contain rounded-xl border border-slate-200 bg-white p-0.5 flex-shrink-0"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-bold text-indigo-400">{manufacturer.name.substring(0, 2).toUpperCase()}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
+                          {manufacturer.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                          {manufacturer.country}
+                        </p>
+                      </div>
                     </div>
                     <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 whitespace-nowrap">
                       {manufacturer.country}

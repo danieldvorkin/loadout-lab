@@ -6,6 +6,7 @@ module Types
     field :name, String, null: false
     field :website, String
     field :country, String
+    field :image_url, String
     field :components, [Types::ComponentType], null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false

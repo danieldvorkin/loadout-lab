@@ -7,6 +7,7 @@ module Types
     field :type, String
     field :weight_oz, Float
     field :msrp_cents, Integer
+    field :image_url, String
     field :manufacturer, Types::ManufacturerType, null: false
     field :specs, GraphQL::Types::JSON
     field :discontinued, Boolean

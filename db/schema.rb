@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_061301) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_065435) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_061301) do
   create_table "components", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "discontinued"
+    t.string "image_url"
     t.bigint "manufacturer_id", null: false
     t.integer "msrp_cents"
     t.string "name"
@@ -54,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_061301) do
   create_table "manufacturers", force: :cascade do |t|
     t.string "country"
     t.datetime "created_at", null: false
+    t.string "image_url"
     t.string "name"
     t.datetime "updated_at", null: false
     t.string "website"

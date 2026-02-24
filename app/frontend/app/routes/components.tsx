@@ -10,6 +10,7 @@ interface Component {
   weightOz: number | null;
   msrpCents: number | null;
   discontinued: boolean;
+  imageUrl: string | null;
   specs: Record<string, unknown>;
   manufacturer: {
     id: string;
@@ -247,6 +248,9 @@ export default function Components() {
                 <table className="w-full">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider w-16">
+                        
+                      </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                         Name
                       </th>
@@ -273,6 +277,22 @@ export default function Components() {
                         key={component.id}
                         className="hover:bg-sky-50/50 transition-colors"
                       >
+                        <td className="px-6 py-4 w-16">
+                          {component.imageUrl ? (
+                            <img
+                              src={component.imageUrl}
+                              alt={component.name}
+                              className="w-12 h-12 object-cover rounded-lg border border-slate-200"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-gradient-to-br from-sky-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                              <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          )}
+                        </td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-slate-800">
                             {component.name}
@@ -323,13 +343,29 @@ export default function Components() {
                   className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-800 text-sm sm:text-base">
-                        {component.name}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-600">
-                        {component.manufacturer.name}
-                      </p>
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      {component.imageUrl ? (
+                        <img
+                          src={component.imageUrl}
+                          alt={component.name}
+                          className="w-14 h-14 object-cover rounded-xl border border-slate-200 flex-shrink-0"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 bg-gradient-to-br from-sky-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
+                          {component.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600">
+                          {component.manufacturer.name}
+                        </p>
+                      </div>
                     </div>
                     {component.discontinued ? (
                       <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-50 text-red-700 border border-red-100 ml-2 whitespace-nowrap">

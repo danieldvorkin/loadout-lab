@@ -54,7 +54,7 @@ module Admin
     end
 
     def manufacturer_params
-      params.require(:manufacturer).permit(:name, :country, :website)
+      params.require(:manufacturer).permit(:name, :country, :website, :image_url)
     end
   end
 end

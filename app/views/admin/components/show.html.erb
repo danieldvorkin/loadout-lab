@@ -9,9 +9,19 @@
   <!-- Component Header -->
   <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
     <div class="flex items-start justify-between">
-      <div>
-        <div class="flex items-center space-x-3">
-          <h1 class="text-2xl font-bold text-slate-800"><%= @component.name %></h1>
+      <div class="flex items-start gap-4">
+        <% if @component.image_url.present? %>
+          <img src="<%= @component.image_url %>" alt="<%= @component.name %>" class="w-20 h-20 object-cover rounded-xl border border-slate-200 flex-shrink-0">
+        <% else %>
+          <div class="w-20 h-20 bg-gradient-to-br from-sky-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+        <% end %>
+        <div>
+          <div class="flex items-center space-x-3">
+            <h1 class="text-2xl font-bold text-slate-800"><%= @component.name %></h1>
           <% if @component.discontinued %>
             <span class="px-2.5 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-full">Discontinued</span>
           <% else %>
@@ -21,6 +31,7 @@
         <p class="text-slate-500 mt-1">
           <%= @component.manufacturer.name %> · <%= @component.type %>
         </p>
+        </div>
       </div>
       <div class="flex items-center space-x-3">
         <a href="/admin/components/<%= @component.id %>/edit" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Edit</a>

@@ -72,7 +72,7 @@ module Admin
     end
 
     def component_params
-      params.require(:component).permit(:name, :type, :manufacturer_id, :weight_oz, :msrp_cents, :discontinued)
+      params.require(:component).permit(:name, :type, :manufacturer_id, :weight_oz, :msrp_cents, :discontinued, :image_url)
     end
   end
 end
