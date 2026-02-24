@@ -38,6 +38,8 @@ interface User {
   notificationPreferences?: Record<string, boolean>;
   isOauthUser?: boolean;
   provider?: string;
+  role?: string;
+  isAdmin?: boolean;
   buildsCount?: number;
   createdAt?: string;
 }
