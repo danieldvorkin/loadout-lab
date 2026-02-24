@@ -32,7 +32,7 @@
   command = "npm run build"
 
 [context.production.environment]
-  VITE_API_URL = "https://your-heroku-app.herokuapp.com"
+  VITE_API_URL = "https://loadoutlab-api-3a7851c775ad.herokuapp.com"
 
 # Preview deploys (for PRs)
 [context.deploy-preview]
