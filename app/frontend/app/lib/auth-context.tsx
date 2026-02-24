@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { useMutation, useQuery, useApolloClient } from '@apollo/client/react';
-import { LOGIN_USER, REGISTER_USER, GET_CURRENT_USER } from './graphql-operations';
+import { LOGIN_USER, REGISTER_USER, GET_CURRENT_USER, GOOGLE_OAUTH_LOGIN } from './graphql-operations';
 
 // Helper to safely access localStorage (not available during SSR)
 const isClient = typeof window !== 'undefined';
@@ -35,6 +35,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; errors: string[] }>;
+  loginWithGoogle: (idToken: string) => Promise<{ success: boolean; errors: string[] }>;
   register: (data: RegisterData) => Promise<{ success: boolean; errors: string[] }>;
   logout: () => void;
 }
@@ -58,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [loginMutation] = useMutation(LOGIN_USER);
   const [registerMutation] = useMutation(REGISTER_USER);
+  const [googleOauthLoginMutation] = useMutation(GOOGLE_OAUTH_LOGIN);
 
   // Check for token on client side only
   useEffect(() => {
@@ -109,6 +111,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [loginMutation, client]);
 
+  const loginWithGoogle = useCallback(async (idToken: string) => {
+    try {
+      const { data } = await googleOauthLoginMutation({
+        variables: { accessToken: idToken },
+      });
+
+      if (data?.googleOauthLogin?.token && data?.googleOauthLogin?.user) {
+        setToken(data.googleOauthLogin.token);
+        setUser(data.googleOauthLogin.user);
+        setHasToken(true);
+        await client.resetStore();
+        return { success: true, errors: [] };
+      }
+
+      return { success: false, errors: data?.googleOauthLogin?.errors || ['Google login failed'] };
+    } catch (error) {
+      return { success: false, errors: [(error as Error).message] };
+    }
+  }, [googleOauthLoginMutation, client]);
+
   const register = useCallback(async (data: RegisterData) => {
     try {
       const { data: responseData } = await registerMutation({
@@ -145,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         isLoading,
         login,
+        loginWithGoogle,
         register,
         logout,
       }}

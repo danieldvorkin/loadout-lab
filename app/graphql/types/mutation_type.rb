@@ -5,6 +5,7 @@ module Types
     # Authentication mutations
     field :register_user, mutation: Mutations::RegisterUser
     field :login_user, mutation: Mutations::LoginUser
+    field :google_oauth_login, mutation: Mutations::GoogleOauthLogin
 
     # Build mutations
     field :create_build, mutation: Mutations::CreateBuild

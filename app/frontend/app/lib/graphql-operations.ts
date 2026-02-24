@@ -50,6 +50,21 @@ export const LOGIN_USER = gql`
   }
 `;
 
+export const GOOGLE_OAUTH_LOGIN = gql`
+  mutation GoogleOauthLogin($accessToken: String!) {
+    googleOauthLogin(input: { accessToken: $accessToken }) {
+      token
+      user {
+        id
+        email
+        username
+        fullName
+      }
+      errors
+    }
+  }
+`;
+
 // ============================================
 // User Queries
 // ============================================
