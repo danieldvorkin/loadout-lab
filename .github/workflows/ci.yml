@@ -139,8 +139,5 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         run: |
-          printf "machine api.heroku.com\n  login %s\n  password %s\nmachine git.heroku.com\n  login %s\n  password %s\n" \
-            "$HEROKU_EMAIL" "$HEROKU_API_KEY" "$HEROKU_EMAIL" "$HEROKU_API_KEY" > ~/.netrc
-          chmod 600 ~/.netrc
-          git remote add heroku https://git.heroku.com/loadoutlab-api.git
-          git push heroku main
+          git remote add heroku https://$HEROKU_EMAIL:$HEROKU_API_KEY@git.heroku.com/loadoutlab-api.git
+          GIT_TERMINAL_PROMPT=0 git push heroku main
