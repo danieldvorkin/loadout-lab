@@ -44,7 +44,7 @@ export default function AccountIndex() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      <AppNav />
+      {/* AppNav is now rendered in root layout */}
 
       <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         {/* Page Header */}

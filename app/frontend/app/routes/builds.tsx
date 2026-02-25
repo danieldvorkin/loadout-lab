@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useAuth } from '../lib/auth-context';
 import { GET_BUILDS, CREATE_BUILD, DELETE_BUILD } from '../lib/graphql-operations';
+import { AppNav } from '../components/AppNav';
 
 interface BuildComponent {
   id: string;
@@ -41,6 +42,8 @@ export default function Builds() {
   const { data, loading, error, refetch } = useQuery<BuildsData>(GET_BUILDS, {
     skip: !isAuthenticated,
   });
+
+  const builds: Build[] = data?.builds ?? [];
 
   const [createBuild, { loading: creating }] = useMutation(CREATE_BUILD, {
     onCompleted: (rawData) => {
@@ -100,21 +103,6 @@ export default function Builds() {
     );
   }
 
-  const builds = data?.builds || [];
-
-  const formatPrice = (cents: number | null | undefined) => {
-    if (cents === null || cents === undefined) return 'N/A';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(cents / 100);
-  };
-
-  const formatWeight = (oz: number | null) => {
-    if (oz === null) return 'N/A';
-    return `${oz.toFixed(2)} oz`;
-  };
-
   const handleCreateBuild = (e: React.FormEvent) => {
     e.preventDefault();
     createBuild({
@@ -132,6 +120,16 @@ export default function Builds() {
   };
 
   const disciplines = ['prs', 'nrl', 'benchrest', 'f-class', 'tactical', 'hunting'];
+
+  const formatPrice = (cents: number | null) => {
+    if (cents === null || cents === undefined) return 'N/A';
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+  };
+
+  const formatWeight = (oz: number | null) => {
+    if (oz === null || oz === undefined) return 'N/A';
+    return `${oz.toFixed(2)} oz`;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">

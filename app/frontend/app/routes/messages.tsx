@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../lib/auth-context';
-import { AppNav } from '../components/AppNav';
 import { GET_MY_CONVERSATIONS } from '../lib/graphql-operations';
 
 interface ConvUser {
@@ -94,8 +93,6 @@ export default function Messages() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      <AppNav />
-
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>

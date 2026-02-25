@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      <AppNav />
+      {/* AppNav is now rendered in root layout */}
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">

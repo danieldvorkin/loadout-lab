@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useState, useMemo, useEffect } from 'react';
 import { GET_MANUFACTURERS } from '../lib/graphql-operations';
 import Pagination from '../components/Pagination';
+import { AppNav } from '../components/AppNav';
 
 interface Manufacturer {
   id: string;
@@ -74,6 +75,7 @@ export default function Manufacturers() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        {/* AppNav is now rendered in root layout */}
         <div className="flex items-center space-x-3">
           <div className="w-5 h-5 rounded-full bg-sky-500 animate-pulse"></div>
           <div className="text-lg text-slate-600 font-medium">Loading manufacturers...</div>
@@ -85,6 +87,7 @@ export default function Manufacturers() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        {/* AppNav is now rendered in root layout */}
         <div className="text-lg text-red-600">Error: {error.message}</div>
       </div>
     );
@@ -92,6 +95,7 @@ export default function Manufacturers() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
+      {/* AppNav is now rendered in root layout */}
       <div className="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">

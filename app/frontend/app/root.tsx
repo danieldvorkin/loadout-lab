@@ -15,6 +15,7 @@ import { apolloClient } from "./lib/apollo-client";
 import { AuthProvider } from "./lib/auth-context";
 import { BuildCartProvider } from "./lib/build-cart-context";
 import BuildCartDrawer from "./components/BuildCartDrawer";
+import { AppNav } from "./components/AppNav";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -55,6 +56,8 @@ export default function App() {
       <ApolloProvider client={apolloClient}>
         <AuthProvider>
           <BuildCartProvider>
+            {/* Persistent navigation for all pages */}
+            <AppNav />
             <Outlet />
             <BuildCartDrawer />
           </BuildCartProvider>

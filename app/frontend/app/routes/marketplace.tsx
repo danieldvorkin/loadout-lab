@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/client/react';
 import { Link, useNavigate } from 'react-router';
 import { useState, useMemo } from 'react';
 import { useAuth } from '../lib/auth-context';
-import { AppNav } from '../components/AppNav';
+
 import {
   GET_LISTINGS,
   GET_MY_LISTINGS,
@@ -229,7 +229,6 @@ export default function Marketplace() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      <AppNav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}

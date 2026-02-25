@@ -208,7 +208,7 @@ export default function Components() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <AppNav />
+        {/* AppNav is now rendered in root layout */}
         <div className="flex items-center justify-center h-[80vh]">
           <div className="text-slate-500 text-sm">Loading components...</div>
         </div>
@@ -219,7 +219,7 @@ export default function Components() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <AppNav />
+        {/* AppNav is now rendered in root layout */}
         <div className="flex items-center justify-center h-[80vh]">
           <div className="text-red-500 text-lg">Error: {error.message}</div>
         </div>
@@ -229,7 +229,7 @@ export default function Components() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      <AppNav />
+      {/* AppNav is now rendered in root layout */}
       <div className="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
 
         {/* Header */}

@@ -188,7 +188,10 @@ export default function DopeCard() {
     onCompleted: () => { setShowBulkAdd(false); },
   });
 
-  const [generateDope, { loading: generating }] = useMutation(GENERATE_DOPE_TABLE, {
+  const [generateDope, { loading: generating }] = useMutation<
+    { generateDopeTable: { ballisticProfile: BallisticProfile | null; errors: string[] } },
+    { ballisticProfileId: string; maxDistance?: number; step?: number }
+  >(GENERATE_DOPE_TABLE, {
     onCompleted: (data) => {
       const errors = data?.generateDopeTable?.errors || [];
       if (errors.length > 0) {
