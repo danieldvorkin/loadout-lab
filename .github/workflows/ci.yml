@@ -134,10 +134,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         run: |
-          git remote add heroku https://$HEROKU_EMAIL:$HEROKU_API_KEY@git.heroku.com/loadoutlab-api.git
-          GIT_TERMINAL_PROMPT=0 git push heroku main
+          heroku git:remote -a loadoutlab-api
+          git push heroku main
