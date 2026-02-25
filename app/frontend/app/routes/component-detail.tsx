@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useNavigate } from 'react-router';
 import { AppNav } from '../components/AppNav';
 import { GET_COMPONENT } from '../lib/graphql-operations';
 
@@ -40,6 +40,7 @@ const formatSpecKey = (key: string) =>
 
 export default function ComponentDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data, loading, error } = useQuery<{ component: ComponentDetail }>(GET_COMPONENT, {
     variables: { id },
     skip: !id,
@@ -65,9 +66,9 @@ export default function ComponentDetail() {
         <AppNav />
         <div className="max-w-3xl mx-auto px-4 py-16 text-center">
           <p className="text-xl text-slate-600">Component not found.</p>
-          <Link to="/components" className="mt-4 inline-block text-sky-600 hover:text-sky-700 font-medium">
+          <button onClick={() => navigate(-1)} className="mt-4 inline-block text-sky-600 hover:text-sky-700 font-medium">
             ← Back to Components
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -82,15 +83,15 @@ export default function ComponentDetail() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back */}
-        <Link
-          to="/components"
+        <button
+          onClick={() => navigate(-1)}
           className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-sky-600 transition-colors mb-6"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back to Components
-        </Link>
+        </button>
 
         {/* Main card */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
