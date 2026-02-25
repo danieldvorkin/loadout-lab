@@ -5,6 +5,12 @@ import { useAuth } from '../../lib/auth-context';
 import { AppNav } from '../../components/AppNav';
 import { UPDATE_USER_PROFILE, GET_USER_PROFILE } from '../../lib/graphql-operations';
 
+interface ProfileUser {
+  notificationPreferences?: Record<string, boolean>;
+}
+interface GetUserProfileData { currentUser: ProfileUser | null; }
+interface UpdateUserProfileData { updateUserProfile: { user?: ProfileUser; errors?: string[] } }
+
 export function meta() {
   return [
     { title: "Preferences - Loadout Lab" },
@@ -16,12 +22,12 @@ export default function PreferencesPage() {
   const { user, isAuthenticated, isLoading: authLoading, updateUser } = useAuth();
   const navigate = useNavigate();
   
-  const { data: profileData, loading: profileLoading } = useQuery(GET_USER_PROFILE, {
+  const { data: profileData, loading: profileLoading } = useQuery<GetUserProfileData>(GET_USER_PROFILE, {
     skip: !isAuthenticated,
     fetchPolicy: 'network-only',
   });
 
-  const [updateProfile, { loading: updating }] = useMutation(UPDATE_USER_PROFILE);
+  const [updateProfile, { loading: updating }] = useMutation<UpdateUserProfileData>(UPDATE_USER_PROFILE);
 
   const [preferences, setPreferences] = useState({
     emailUpdates: true,
@@ -73,8 +79,8 @@ export default function PreferencesPage() {
         },
       });
 
-      if (data?.updateUserProfile?.errors?.length > 0) {
-        setErrors(data.updateUserProfile.errors);
+      if ((data?.updateUserProfile?.errors?.length ?? 0) > 0) {
+        setErrors(data!.updateUserProfile.errors ?? []);
       } else if (data?.updateUserProfile?.user) {
         updateUser(data.updateUserProfile.user);
         setSuccessMessage('Preferences saved successfully!');

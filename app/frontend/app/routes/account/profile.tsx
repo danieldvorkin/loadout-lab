@@ -5,6 +5,23 @@ import { useAuth } from '../../lib/auth-context';
 import { AppNav } from '../../components/AppNav';
 import { UPDATE_USER_PROFILE, GET_USER_PROFILE } from '../../lib/graphql-operations';
 
+interface ProfileUser {
+  username?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  bio?: string;
+  location?: string;
+  avatarUrl?: string;
+  dateOfBirth?: string;
+  preferredDiscipline?: string;
+  website?: string;
+  isOauthUser?: boolean;
+  socialLinks?: Record<string, string>;
+  notificationPreferences?: Record<string, boolean>;
+}
+interface GetUserProfileData { currentUser: ProfileUser | null; }
+interface UpdateUserProfileData { updateUserProfile: { user?: ProfileUser; errors?: string[] } }
+
 export function meta() {
   return [
     { title: "Edit Profile - Loadout Lab" },
@@ -28,12 +45,12 @@ export default function ProfilePage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState('');
   
-  const { data, loading: profileLoading } = useQuery(GET_USER_PROFILE, {
+  const { data, loading: profileLoading } = useQuery<GetUserProfileData>(GET_USER_PROFILE, {
     skip: !isAuthenticated,
     fetchPolicy: 'network-only',
   });
 
-  const [updateProfile, { loading: updating }] = useMutation(UPDATE_USER_PROFILE);
+  const [updateProfile, { loading: updating }] = useMutation<UpdateUserProfileData>(UPDATE_USER_PROFILE);
 
   const [formData, setFormData] = useState({
     username: '',
@@ -114,8 +131,8 @@ export default function ProfilePage() {
         },
       });
 
-      if (result?.updateUserProfile?.errors?.length > 0) {
-        setErrors(result.updateUserProfile.errors);
+      if ((result?.updateUserProfile?.errors?.length ?? 0) > 0) {
+        setErrors(result!.updateUserProfile.errors ?? []);
       } else if (result?.updateUserProfile?.user) {
         updateUser(result.updateUserProfile.user);
         setSuccessMessage('Profile updated successfully!');

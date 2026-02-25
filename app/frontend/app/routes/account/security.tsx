@@ -5,6 +5,11 @@ import { useAuth } from '../../lib/auth-context';
 import { AppNav } from '../../components/AppNav';
 import { CHANGE_PASSWORD, DELETE_ACCOUNT, GET_USER_PROFILE } from '../../lib/graphql-operations';
 
+interface SecurityProfileUser { isOauthUser?: boolean; }
+interface GetUserProfileData { currentUser: SecurityProfileUser | null; }
+interface ChangePasswordData { changePassword: { success: boolean; errors?: string[] } }
+interface DeleteAccountData { deleteAccount: { success: boolean; errors?: string[] } }
+
 export function meta() {
   return [
     { title: "Security Settings - Loadout Lab" },
@@ -16,13 +21,13 @@ export default function SecurityPage() {
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
   
-  const { data: profileData, loading: profileLoading } = useQuery(GET_USER_PROFILE, {
+  const { data: profileData, loading: profileLoading } = useQuery<GetUserProfileData>(GET_USER_PROFILE, {
     skip: !isAuthenticated,
     fetchPolicy: 'network-only',
   });
 
-  const [changePassword, { loading: changingPassword }] = useMutation(CHANGE_PASSWORD);
-  const [deleteAccount, { loading: deletingAccount }] = useMutation(DELETE_ACCOUNT);
+  const [changePassword, { loading: changingPassword }] = useMutation<ChangePasswordData>(CHANGE_PASSWORD);
+  const [deleteAccount, { loading: deletingAccount }] = useMutation<DeleteAccountData>(DELETE_ACCOUNT);
 
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
