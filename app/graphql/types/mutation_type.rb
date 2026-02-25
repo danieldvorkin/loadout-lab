@@ -43,5 +43,10 @@ module Types
     field :create_listing, mutation: Mutations::CreateListing
     field :update_listing, mutation: Mutations::UpdateListing
     field :delete_listing, mutation: Mutations::DeleteListing
+
+    # Messaging mutations
+    field :start_conversation,      mutation: Mutations::StartConversation
+    field :send_message,            mutation: Mutations::SendMessage
+    field :mark_conversation_read,  mutation: Mutations::MarkConversationRead
   end
 end

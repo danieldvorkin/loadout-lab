@@ -1109,3 +1109,150 @@ export const DELETE_LISTING = gql`
     }
   }
 `;
+
+// ============================================
+// Messaging Queries & Mutations
+// ============================================
+
+export const GET_MY_CONVERSATIONS = gql`
+  query GetMyConversations {
+    myConversations {
+      id
+      lastMessageAt
+      unreadCount
+      createdAt
+      buyer {
+        id
+        username
+        avatarUrl
+      }
+      seller {
+        id
+        username
+        avatarUrl
+      }
+      listing {
+        id
+        title
+        listingType
+        status
+        component {
+          id
+          name
+          imageUrl
+          manufacturer {
+            id
+            name
+          }
+        }
+      }
+      latestMessage {
+        id
+        body
+        createdAt
+        user {
+          id
+          username
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CONVERSATION = gql`
+  query GetConversation($id: ID!) {
+    conversation(id: $id) {
+      id
+      lastMessageAt
+      unreadCount
+      createdAt
+      buyer {
+        id
+        username
+        avatarUrl
+      }
+      seller {
+        id
+        username
+        avatarUrl
+      }
+      listing {
+        id
+        title
+        listingType
+        status
+        priceCents
+        component {
+          id
+          name
+          imageUrl
+          manufacturer {
+            id
+            name
+          }
+        }
+      }
+      messages {
+        id
+        body
+        read
+        createdAt
+        user {
+          id
+          username
+          avatarUrl
+        }
+      }
+    }
+  }
+`;
+
+export const START_CONVERSATION = gql`
+  mutation StartConversation($listingId: ID!, $message: String) {
+    startConversation(input: { listingId: $listingId, message: $message }) {
+      conversation {
+        id
+        buyer { id username }
+        seller { id username }
+        listing { id title }
+        unreadCount
+        createdAt
+      }
+      errors
+    }
+  }
+`;
+
+export const SEND_MESSAGE = gql`
+  mutation SendMessage($conversationId: ID!, $body: String!) {
+    sendMessage(input: { conversationId: $conversationId, body: $body }) {
+      message {
+        id
+        body
+        read
+        createdAt
+        user {
+          id
+          username
+          avatarUrl
+        }
+      }
+      errors
+    }
+  }
+`;
+
+export const MARK_CONVERSATION_READ = gql`
+  mutation MarkConversationRead($conversationId: ID!) {
+    markConversationRead(input: { conversationId: $conversationId }) {
+      success
+      errors
+    }
+  }
+`;
+
+export const GET_MY_UNREAD_COUNT = gql`
+  query GetMyUnreadCount {
+    myUnreadCount
+  }
+`;

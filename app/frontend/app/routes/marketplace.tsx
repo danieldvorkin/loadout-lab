@@ -1,7 +1,8 @@
 import { useQuery, useMutation } from '@apollo/client/react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useState, useMemo } from 'react';
 import { useAuth } from '../lib/auth-context';
+import { AppNav } from '../components/AppNav';
 import {
   GET_LISTINGS,
   GET_MY_LISTINGS,
@@ -9,6 +10,7 @@ import {
   UPDATE_LISTING,
   DELETE_LISTING,
   GET_COMPONENTS,
+  START_CONVERSATION,
 } from '../lib/graphql-operations';
 
 export function meta() {
@@ -109,6 +111,7 @@ const DEFAULT_FORM = {
 
 export default function Marketplace() {
   const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'all' | 'for_sale' | 'showcase' | 'mine'>('all');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -226,35 +229,7 @@ export default function Marketplace() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Nav */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                🎯 Loadout Lab
-              </Link>
-              <div className="hidden sm:flex gap-6 text-sm font-medium text-slate-600">
-                <Link to="/components" className="hover:text-sky-600 transition-colors">Components</Link>
-                <Link to="/manufacturers" className="hover:text-sky-600 transition-colors">Manufacturers</Link>
-                {isAuthenticated && <Link to="/builds" className="hover:text-sky-600 transition-colors">My Builds</Link>}
-                <Link to="/marketplace" className="text-amber-600 font-semibold">Community Gear</Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {isAuthenticated ? (
-                <Link to="/account" className="text-sm text-slate-600 hover:text-sky-600 transition-colors font-medium">
-                  {user?.username}
-                </Link>
-              ) : (
-                <Link to="/login" className="px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 transition-all shadow-sm">
-                  Sign in
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -536,11 +511,13 @@ export default function Marketplace() {
         <ListingModal
           listing={selectedListing}
           currentUserId={user?.id}
+          isAuthenticated={isAuthenticated}
           onClose={() => setSelectedListing(null)}
           onMarkSold={() => handleMarkSold(selectedListing)}
           onRemove={() => handleRemove(selectedListing)}
           onCopyLink={() => handleCopyLink(selectedListing.id)}
           copied={copied === selectedListing.id}
+          navigate={navigate}
         />
       )}
     </div>
@@ -658,23 +635,47 @@ function ListingCard({
 function ListingModal({
   listing,
   currentUserId,
+  isAuthenticated,
   onClose,
   onMarkSold,
   onRemove,
   onCopyLink,
   copied,
+  navigate,
 }: {
   listing: Listing;
   currentUserId?: string;
+  isAuthenticated: boolean;
   onClose: () => void;
   onMarkSold: () => void;
   onRemove: () => void;
   onCopyLink: () => void;
   copied: boolean;
+  navigate: (path: string) => void;
 }) {
   const isOwner = currentUserId === listing.user.id;
   const isSold = listing.status === 'sold';
   const image = listing.imageUrl || listing.component.imageUrl;
+  const [showInterest, setShowInterest] = useState(false);
+  const [interestMsg, setInterestMsg] = useState('');
+  const [interestError, setInterestError] = useState<string | null>(null);
+
+  const [startConversation, { loading: starting }] = useMutation<{
+    startConversation: { conversation: { id: string } | null; errors: string[] }
+  }>(START_CONVERSATION, {
+    onCompleted: (data) => {
+      const conv = data?.startConversation?.conversation;
+      if (conv) { onClose(); navigate(`/messages/${conv.id}`); }
+      else setInterestError(data?.startConversation?.errors?.[0] ?? 'Something went wrong');
+    },
+    onError: (e) => setInterestError(e.message),
+  });
+
+  const handleSendInterest = (e: React.FormEvent) => {
+    e.preventDefault();
+    setInterestError(null);
+    startConversation({ variables: { listingId: listing.id, message: interestMsg.trim() || undefined } });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -789,17 +790,58 @@ function ListingModal({
               >
                 {copied ? '✓ Link Copied!' : '🔗 Share'}
               </button>
-              {listing.contactInfo && !isOwner && (
-                <a
-                  href={listing.contactInfo.startsWith('http') ? listing.contactInfo : `mailto:${listing.contactInfo}`}
-                  className="px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm transition-all"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Contact Seller
-                </a>
-              )}
             </div>
           </div>
+
+          {/* Interested CTA */}
+          {!isOwner && !isSold && (
+            <div className="space-y-2">
+              {!showInterest ? (
+                <div>
+                  {isAuthenticated ? (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowInterest(true); setInterestMsg(`Hi, I’m interested in your ${listing.title}. Is it still available?`); }}
+                      className="w-full py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm transition-all"
+                    >
+                      💬 I’m Interested
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="block w-full py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 text-center shadow-sm"
+                      onClick={onClose}
+                    >
+                      Sign in to contact seller
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <form onSubmit={handleSendInterest} className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                  <textarea
+                    autoFocus
+                    rows={3}
+                    value={interestMsg}
+                    onChange={(e) => setInterestMsg(e.target.value)}
+                    placeholder="Say something to the seller…"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none"
+                  />
+                  {interestError && <p className="text-xs text-red-600">{interestError}</p>}
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={starting}
+                      className="flex-1 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 disabled:opacity-60 shadow-sm transition-all"
+                    >
+                      {starting ? 'Sending…' : '💬 Send Message'}
+                    </button>
+                    <button type="button" onClick={() => { setShowInterest(false); setInterestError(null); }} className="px-4 py-2.5 text-sm font-medium rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
 
           {/* Owner actions */}
           {isOwner && !isSold && (

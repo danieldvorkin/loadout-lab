@@ -12,6 +12,8 @@ export default [
   route("builds/:id/ballistics/:profileId", "routes/dope-card.tsx"),
   route("marketplace", "routes/marketplace.tsx"),
   route("marketplace/:id", "routes/marketplace-listing.tsx"),
+  route("messages", "routes/messages.tsx"),
+  route("messages/:id", "routes/messages-conversation.tsx"),
   route("account", "routes/account/index.tsx"),
   route("account/profile", "routes/account/profile.tsx"),
   route("account/security", "routes/account/security.tsx"),

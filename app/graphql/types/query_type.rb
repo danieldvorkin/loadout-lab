@@ -247,5 +247,43 @@ module Types
                             .includes(component: :manufacturer, build_component: {})
                             .recent
     end
+
+    # Conversation queries
+    field :my_conversations, [Types::ConversationType], null: false,
+          description: "All conversations for the current user, ordered by most recent activity"
+
+    def my_conversations
+      return [] unless context[:current_user]
+      Conversation.for_user(context[:current_user])
+                  .includes(:listing, :buyer, :seller, :messages)
+                  .recent
+    end
+
+    field :conversation, Types::ConversationType, null: true,
+          description: "Fetch a single conversation (must be a participant)" do
+      argument :id, ID, required: true
+    end
+
+    def conversation(id:)
+      return nil unless context[:current_user]
+      conv = Conversation.includes(:listing, :buyer, :seller, messages: :user).find_by(id: id)
+      conv&.participant?(context[:current_user]) ? conv : nil
+    end
+
+    field :my_unread_count, Integer, null: false,
+          description: "Total number of unread messages across all of the current user's conversations"
+
+    def my_unread_count
+      return 0 unless context[:current_user]
+      user = context[:current_user]
+      Message.joins(:conversation)
+             .where(read: false)
+             .where.not(user_id: user.id)
+             .where(
+               "conversations.buyer_id = :uid OR conversations.seller_id = :uid",
+               uid: user.id
+             )
+             .count
+    end
   end
 end

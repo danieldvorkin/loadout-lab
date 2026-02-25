@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_25_152828) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -100,6 +100,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_152828) do
     t.index ["type"], name: "index_components_on_type"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "buyer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "last_message_at"
+    t.bigint "listing_id", null: false
+    t.bigint "seller_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_conversations_on_buyer_id"
+    t.index ["last_message_at"], name: "index_conversations_on_last_message_at"
+    t.index ["listing_id", "buyer_id"], name: "index_conversations_on_listing_id_and_buyer_id", unique: true
+    t.index ["listing_id"], name: "index_conversations_on_listing_id"
+    t.index ["seller_id"], name: "index_conversations_on_seller_id"
+  end
+
   create_table "listings", force: :cascade do |t|
     t.bigint "build_component_id"
     t.bigint "component_id", null: false
@@ -142,6 +156,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_152828) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.string "website"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.boolean "read", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id", "read"], name: "index_messages_on_conversation_id_and_read"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "projectiles", force: :cascade do |t|
@@ -198,7 +224,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_152828) do
   add_foreign_key "build_components", "components"
   add_foreign_key "builds", "users"
   add_foreign_key "components", "manufacturers"
+  add_foreign_key "conversations", "listings"
+  add_foreign_key "conversations", "users", column: "buyer_id"
+  add_foreign_key "conversations", "users", column: "seller_id"
   add_foreign_key "listings", "components"
   add_foreign_key "listings", "users"
   add_foreign_key "load_tests", "ballistic_profiles"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
 end

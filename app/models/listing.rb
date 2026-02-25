@@ -4,6 +4,7 @@ class Listing < ApplicationRecord
   belongs_to :user
   belongs_to :component
   belongs_to :build_component, optional: true
+  has_many :conversations, dependent: :destroy
 
   enum :listing_type, { showcase: 0, for_sale: 1 }, prefix: true
   enum :status, { active: 0, sold: 1, removed: 2 }, prefix: true

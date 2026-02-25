@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../../lib/auth-context';
+import { AppNav } from '../../components/AppNav';
 import { useEffect } from 'react';
 
 export function meta() {
@@ -10,7 +11,7 @@ export function meta() {
 }
 
 export default function AccountIndex() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,45 +44,7 @@ export default function AccountIndex() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <Link to="/" className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                  🎯 Loadout Lab
-                </h1>
-              </Link>
-              <div className="hidden sm:ml-8 sm:flex sm:space-x-6">
-                <Link
-                  to="/components"
-                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                >
-                  Components
-                </Link>
-                <Link
-                  to="/builds"
-                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                >
-                  My Builds
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-slate-600">
-                Welcome, <span className="font-medium text-slate-800">{user?.username}</span>
-              </span>
-              <button
-                onClick={logout}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         {/* Page Header */}

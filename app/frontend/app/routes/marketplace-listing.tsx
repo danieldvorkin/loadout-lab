@@ -2,7 +2,8 @@ import { useQuery, useMutation } from '@apollo/client/react';
 import { Link, useParams, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useAuth } from '../lib/auth-context';
-import { GET_LISTING, UPDATE_LISTING, DELETE_LISTING } from '../lib/graphql-operations';
+import { AppNav } from '../components/AppNav';
+import { GET_LISTING, UPDATE_LISTING, DELETE_LISTING, START_CONVERSATION } from '../lib/graphql-operations';
 
 interface ListingUser {
   id: string;
@@ -85,6 +86,26 @@ export default function MarketplaceListing() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const [copied, setCopied] = useState(false);
+  const [showInterest, setShowInterest] = useState(false);
+  const [interestMsg, setInterestMsg] = useState('');
+  const [interestError, setInterestError] = useState<string | null>(null);
+
+  const [startConversation, { loading: starting }] = useMutation<{
+    startConversation: { conversation: { id: string } | null; errors: string[] }
+  }>(START_CONVERSATION, {
+    onCompleted: (data) => {
+      const conv = data?.startConversation?.conversation;
+      if (conv) navigate(`/messages/${conv.id}`);
+      else setInterestError(data?.startConversation?.errors?.[0] ?? 'Something went wrong');
+    },
+    onError: (e) => setInterestError(e.message),
+  });
+
+  const handleSendInterest = (e: React.FormEvent) => {
+    e.preventDefault();
+    setInterestError(null);
+    startConversation({ variables: { listingId: listing?.id, message: interestMsg.trim() || undefined } });
+  };
 
   const { data, loading, error } = useQuery<{ listing: Listing }>(GET_LISTING, {
     variables: { id },
@@ -138,35 +159,7 @@ export default function MarketplaceListing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Nav */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                🎯 Loadout Lab
-              </Link>
-              <div className="hidden sm:flex gap-6 text-sm font-medium text-slate-600">
-                <Link to="/components" className="hover:text-sky-600 transition-colors">Components</Link>
-                <Link to="/manufacturers" className="hover:text-sky-600 transition-colors">Manufacturers</Link>
-                {isAuthenticated && <Link to="/builds" className="hover:text-sky-600 transition-colors">My Builds</Link>}
-                <Link to="/marketplace" className="text-amber-600 font-semibold">Community Gear</Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {isAuthenticated ? (
-                <Link to="/account" className="text-sm text-slate-600 hover:text-sky-600 transition-colors font-medium">
-                  {user?.username}
-                </Link>
-              ) : (
-                <Link to="/login" className="px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 transition-all shadow-sm">
-                  Sign in
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back */}
@@ -267,32 +260,77 @@ export default function MarketplaceListing() {
             </div>
 
             {/* Seller info + actions */}
-            <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-indigo-400 flex items-center justify-center text-white text-sm font-bold">
-                  {listing.user.username[0]?.toUpperCase()}
+            <div className="space-y-3 pt-1 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-indigo-400 flex items-center justify-center text-white text-sm font-bold">
+                    {listing.user.username[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">@{listing.user.username}</p>
+                    <p className="text-xs text-slate-400">Posted {timeAgo(listing.createdAt)}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-700">@{listing.user.username}</p>
-                  <p className="text-xs text-slate-400">Posted {timeAgo(listing.createdAt)}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopyLink}
                   className="px-3 py-2 text-sm font-medium rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
                 >
                   {copied ? '✓ Copied!' : '🔗 Share'}
                 </button>
-                {listing.contactInfo && !isOwner && (
-                  <a
-                    href={listing.contactInfo.startsWith('http') ? listing.contactInfo : `mailto:${listing.contactInfo}`}
-                    className="px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm transition-all"
-                  >
-                    Contact Seller
-                  </a>
-                )}
               </div>
+
+              {/* CTA: Interested / not owner / not sold */}
+              {!isOwner && !isSold && (
+                <div className="space-y-2">
+                  {!showInterest ? (
+                    <div className="flex gap-2">
+                      {isAuthenticated ? (
+                        <button
+                          onClick={() => { setShowInterest(true); setInterestMsg(`Hi, I'm interested in your ${listing.title}. Is it still available?`); }}
+                          className="flex-1 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm transition-all"
+                        >
+                          💬 I'm Interested
+                        </button>
+                      ) : (
+                        <Link
+                          to="/login"
+                          className="flex-1 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 text-center shadow-sm"
+                        >
+                          Sign in to contact seller
+                        </Link>
+                      )}
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendInterest} className="space-y-2">
+                      <textarea
+                        autoFocus
+                        rows={3}
+                        value={interestMsg}
+                        onChange={(e) => setInterestMsg(e.target.value)}
+                        placeholder="Say something to the seller…"
+                        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none"
+                      />
+                      {interestError && <p className="text-xs text-red-600">{interestError}</p>}
+                      <div className="flex gap-2">
+                        <button
+                          type="submit"
+                          disabled={starting}
+                          className="flex-1 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 disabled:opacity-60 shadow-sm transition-all"
+                        >
+                          {starting ? 'Sending…' : '💬 Send Message'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setShowInterest(false); setInterestError(null); }}
+                          className="px-4 py-2.5 text-sm font-medium rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Owner actions */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useAuth } from '../../lib/auth-context';
+import { AppNav } from '../../components/AppNav';
 import { UPDATE_USER_PROFILE, GET_USER_PROFILE } from '../../lib/graphql-operations';
 
 export function meta() {
@@ -12,7 +13,7 @@ export function meta() {
 }
 
 export default function PreferencesPage() {
-  const { user, isAuthenticated, isLoading: authLoading, logout, updateUser } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, updateUser } = useAuth();
   const navigate = useNavigate();
   
   const { data: profileData, loading: profileLoading } = useQuery(GET_USER_PROFILE, {
@@ -125,31 +126,7 @@ export default function PreferencesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <Link to="/" className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                  🎯 Loadout Lab
-                </h1>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/account" className="text-sm text-slate-600 hover:text-sky-600 transition-colors">
-                ← Back to Settings
-              </Link>
-              <button
-                onClick={logout}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         {/* Page Header */}

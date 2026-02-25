@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { useAuth } from "../lib/auth-context";
+import { AppNav } from "../components/AppNav";
 
 export function meta() {
   return [
@@ -9,7 +10,7 @@ export function meta() {
 }
 
 export default function Home() {
-  const { isAuthenticated, user, logout, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -24,94 +25,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                  🎯 Loadout Lab
-                </h1>
-              </div>
-              <div className="hidden sm:ml-8 sm:flex sm:space-x-6">
-                <Link
-                  to="/components"
-                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                >
-                  Components
-                </Link>
-                <Link
-                  to="/manufacturers"
-                  className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                >
-                  Manufacturers
-                </Link>
-                {isAuthenticated && (
-                  <Link
-                    to="/builds"
-                    className="text-slate-600 hover:text-sky-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                  >
-                    My Builds
-                  </Link>
-                )}
-                <Link
-                  to="/marketplace"
-                  className="text-amber-600 hover:text-amber-700 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
-                >
-                  Community Gear
-                </Link>
-                {isAuthenticated && user?.isAdmin && (
-                  <a
-                    href={import.meta.env.DEV ? 'http://localhost:3000/admin' : 'https://loadoutlab-api-3a7851c775ad.herokuapp.com/admin/'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-amber-600 hover:text-amber-700 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors gap-1"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-                    </svg>
-                    Admin
-                  </a>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to="/account"
-                    className="text-sm text-slate-600 hover:text-sky-600 transition-colors"
-                  >
-                    <span className="font-medium text-slate-800">{user?.username}</span>
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-slate-600 hover:text-slate-800 text-sm font-medium transition-colors"
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-sm hover:shadow transition-all"
-                  >
-                    Sign up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
