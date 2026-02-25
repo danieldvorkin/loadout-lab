@@ -102,7 +102,8 @@ export default function BuildCartDrawer() {
       {/* Floating Cart Button */}
       <button
         onClick={toggleCart}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-slate-800 hover:bg-slate-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-4 sm:right-6 z-40 w-14 h-14 bg-slate-800 hover:bg-slate-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+        style={{ bottom: 'max(1.5rem, calc(env(safe-area-inset-bottom) + 0.5rem))' }}
         title="Build Cart"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,7 +238,7 @@ export default function BuildCartDrawer() {
 
             {/* Add to Build Section */}
             {cartItems.length > 0 && (
-              <div className="border-t border-slate-200 p-6 bg-slate-50 space-y-4">
+              <div className="border-t border-slate-200 p-6 bg-slate-50 space-y-4" style={{ paddingBottom: 'max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem))' }}>
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
                   Add to Build
                 </h3>
