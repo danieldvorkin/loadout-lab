@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+echo "Running RSpec specs..."
+bundle exec rspec --format progress
+
+echo ""
+echo "All specs passed! Pushing to Heroku..."
+git push heroku main
+
+echo ""
+echo "Deployed successfully!"
