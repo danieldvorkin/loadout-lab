@@ -13,6 +13,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { apolloClient } from "./lib/apollo-client";
 import { AuthProvider } from "./lib/auth-context";
+import { BuildCartProvider } from "./lib/build-cart-context";
+import BuildCartDrawer from "./components/BuildCartDrawer";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -52,7 +54,10 @@ export default function App() {
     <GoogleOAuthProvider clientId={googleClientId}>
       <ApolloProvider client={apolloClient}>
         <AuthProvider>
-          <Outlet />
+          <BuildCartProvider>
+            <Outlet />
+            <BuildCartDrawer />
+          </BuildCartProvider>
         </AuthProvider>
       </ApolloProvider>
     </GoogleOAuthProvider>

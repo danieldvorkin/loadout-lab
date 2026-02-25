@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { GET_COMPONENTS } from '../lib/graphql-operations';
 import Pagination from '../components/Pagination';
 import { AppNav } from '../components/AppNav';
+import { useBuildCart } from '../lib/build-cart-context';
 
 interface Component {
   id: string;
@@ -57,6 +58,7 @@ export default function Components() {
   const [mfgSearch, setMfgSearch] = useState('');
   const [mfgDropdownOpen, setMfgDropdownOpen] = useState(false);
   const mfgRef = useRef<HTMLDivElement>(null);
+  const { addToCart, removeFromCart, isInCart, openCart } = useBuildCart();
 
   // All state lives in URL params — filters survive navigation
   const searchTerm = searchParams.get('q') || '';
@@ -477,6 +479,7 @@ export default function Components() {
                       <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Weight</th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">MSRP</th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                      <th className="px-4 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider w-16">Build</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -532,6 +535,27 @@ export default function Components() {
                             </span>
                           )}
                         </td>
+                        <td className="px-4 py-4 text-center" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isInCart(component.id)) {
+                                removeFromCart(component.id);
+                              } else {
+                                addToCart(component);
+                                openCart();
+                              }
+                            }}
+                            title={isInCart(component.id) ? 'Remove from build cart' : 'Add to build cart'}
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-all text-sm font-bold ${
+                              isInCart(component.id)
+                                ? 'bg-emerald-100 text-emerald-600 hover:bg-red-50 hover:text-red-500'
+                                : 'bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200'
+                            }`}
+                          >
+                            {isInCart(component.id) ? '✓' : '+'}
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -582,6 +606,32 @@ export default function Components() {
                         <span className="text-xs font-semibold text-slate-700">{formatPrice(component.msrpCents)}</span>
                       </div>
                     </div>
+                  </div>
+                  {/* Add to build button row */}
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex justify-end" onClick={(e) => e.preventDefault()}>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (isInCart(component.id)) {
+                          removeFromCart(component.id);
+                        } else {
+                          addToCart(component);
+                          openCart();
+                        }
+                      }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        isInCart(component.id)
+                          ? 'bg-emerald-100 text-emerald-700 hover:bg-red-50 hover:text-red-600'
+                          : 'bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200'
+                      }`}
+                    >
+                      {isInCart(component.id) ? (
+                        <><span>✓</span> In Cart</>
+                      ) : (
+                        <><span>+</span> Add to Build</>
+                      )}
+                    </button>
                   </div>
                 </Link>
               ))}

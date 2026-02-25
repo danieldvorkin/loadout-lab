@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { Link, useParams, useNavigate } from 'react-router';
 import { AppNav } from '../components/AppNav';
 import { GET_COMPONENT } from '../lib/graphql-operations';
+import { useBuildCart } from '../lib/build-cart-context';
 
 interface ComponentDetail {
   id: string;
@@ -41,6 +42,7 @@ const formatSpecKey = (key: string) =>
 export default function ComponentDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart, removeFromCart, isInCart, openCart } = useBuildCart();
   const { data, loading, error } = useQuery<{ component: ComponentDetail }>(GET_COMPONENT, {
     variables: { id },
     skip: !id,
@@ -128,6 +130,23 @@ export default function ComponentDetail() {
                     Available
                   </span>
                 )}
+                <button
+                  onClick={() => {
+                    if (isInCart(c.id)) {
+                      removeFromCart(c.id);
+                    } else {
+                      addToCart(c);
+                      openCart();
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-full border transition-all ${
+                    isInCart(c.id)
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200'
+                      : 'bg-slate-800 text-white border-slate-800 hover:bg-slate-700'
+                  }`}
+                >
+                  {isInCart(c.id) ? '✓ In Build Cart' : '+ Add to Build Cart'}
+                </button>
               </div>
 
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">{c.name}</h1>
