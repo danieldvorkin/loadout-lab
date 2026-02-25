@@ -9,10 +9,10 @@ module Mutations
     type Types::BuildType
 
     def resolve(id:, name: nil, discipline: nil)
-      raise GraphQL::ExecutionError, 'You must be logged in' unless context[:current_user]
+      raise GraphQL::ExecutionError, "You must be logged in" unless context[:current_user]
 
       build = context[:current_user].builds.find_by(id: id)
-      raise GraphQL::ExecutionError, 'Build not found or does not belong to you' unless build
+      raise GraphQL::ExecutionError, "Build not found or does not belong to you" unless build
 
       build.name = name if name.present?
       build.discipline = discipline if discipline.present?
@@ -20,7 +20,7 @@ module Mutations
       if build.save
         build
       else
-        raise GraphQL::ExecutionError, build.errors.full_messages.join(', ')
+        raise GraphQL::ExecutionError, build.errors.full_messages.join(", ")
       end
     end
   end

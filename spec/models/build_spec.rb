@@ -30,7 +30,7 @@ RSpec.describe Build, type: :model do
   describe 'weight and cost tracking' do
     let(:build) { create(:build) }
     let(:manufacturer) { create(:manufacturer) }
-    
+
     it 'tracks total weight' do
       build.update(total_weight_oz: 120.5)
       expect(build.total_weight_oz).to eq(120.5)

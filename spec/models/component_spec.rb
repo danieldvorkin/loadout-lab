@@ -24,7 +24,7 @@ RSpec.describe Component, type: :model do
 
   describe 'attributes' do
     let(:manufacturer) { create(:manufacturer) }
-    
+
     it 'stores specs as JSON' do
       component = create(:component, specs: { caliber: '.308', twist_rate: '1:10' })
       expect(component.specs['caliber']).to eq('.308')

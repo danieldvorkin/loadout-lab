@@ -6,15 +6,15 @@ module Mutations
     argument :message,    String, required: false
 
     field :conversation, Types::ConversationType, null: true
-    field :errors,       [String],                null: false
+    field :errors,       [ String ],                null: false
 
     def resolve(listing_id:, message: nil)
-      return { conversation: nil, errors: ['Not authenticated'] } unless context[:current_user]
+      return { conversation: nil, errors: [ "Not authenticated" ] } unless context[:current_user]
 
       current_user = context[:current_user]
       listing      = Listing.find_by(id: listing_id)
-      return { conversation: nil, errors: ['Listing not found'] }           unless listing
-      return { conversation: nil, errors: ["You can't message yourself"] }   if listing.user_id == current_user.id
+      return { conversation: nil, errors: [ "Listing not found" ] }           unless listing
+      return { conversation: nil, errors: [ "You can't message yourself" ] }   if listing.user_id == current_user.id
 
       conversation = Conversation.find_or_initialize_by(
         listing_id: listing.id,

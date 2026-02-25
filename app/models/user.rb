@@ -9,8 +9,8 @@ class User < ApplicationRecord
 
   has_many :builds,               dependent: :destroy
   has_many :listings,              dependent: :destroy
-  has_many :sent_conversations,    class_name: 'Conversation', foreign_key: :buyer_id,  dependent: :destroy
-  has_many :received_conversations, class_name: 'Conversation', foreign_key: :seller_id, dependent: :destroy
+  has_many :sent_conversations,    class_name: "Conversation", foreign_key: :buyer_id,  dependent: :destroy
+  has_many :received_conversations, class_name: "Conversation", foreign_key: :seller_id, dependent: :destroy
   has_many :messages,              dependent: :destroy
 
   # Roles enum - admin@example.com gets admin, everyone else is user

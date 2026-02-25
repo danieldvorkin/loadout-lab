@@ -23,7 +23,7 @@ RSpec.describe "DeleteAccount mutation", type: :request do
   context 'when user is authenticated' do
     it 'deletes account with correct password and confirmation' do
       user_id = user.id
-      
+
       result = graphql_request(
         query: mutation,
         variables: {
@@ -87,7 +87,7 @@ RSpec.describe "DeleteAccount mutation", type: :request do
     it 'deletes associated builds' do
       create_list(:build, 3, user: user)
       expect(user.builds.count).to eq(3)
-      
+
       graphql_request(
         query: mutation,
         variables: {
@@ -104,7 +104,7 @@ RSpec.describe "DeleteAccount mutation", type: :request do
   context 'when user is an OAuth user' do
     it 'deletes account without password' do
       user_id = oauth_user.id
-      
+
       result = graphql_request(
         query: mutation,
         variables: {

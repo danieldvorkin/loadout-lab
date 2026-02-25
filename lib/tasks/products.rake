@@ -9,9 +9,9 @@ namespace :products do
   end
 
   desc "Sync products from a specific retailer (e.g., rake products:sync_retailer[mdt])"
-  task :sync_retailer, [:retailer_key] => :environment do |_t, args|
+  task :sync_retailer, [ :retailer_key ] => :environment do |_t, args|
     retailer_key = args[:retailer_key]
-    
+
     if retailer_key.blank?
       puts "Please provide a retailer key. Available retailers:"
       SyncProductsJob::RETAILERS.each do |key, config|

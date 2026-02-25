@@ -37,7 +37,7 @@ RSpec.describe BallisticCalculator, type: :service do
     it "calculates at the correct distance intervals" do
       results = described_class.calculate(profile, max_distance: 500, step: 100)
       distances = results.map(&:distance_yards)
-      expect(distances).to eq([100, 200, 300, 400, 500])
+      expect(distances).to eq([ 100, 200, 300, 400, 500 ])
     end
 
     it "shows near-zero drop at the zero distance" do

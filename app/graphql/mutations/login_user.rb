@@ -13,7 +13,7 @@ module Mutations
       if user&.valid_password?(password)
         # Generate JWT token
         token = generate_jwt_token(user)
-        
+
         {
           token: token,
           user: user,
@@ -23,7 +23,7 @@ module Mutations
         {
           token: nil,
           user: nil,
-          errors: ['Invalid email or password']
+          errors: [ "Invalid email or password" ]
         }
       end
     end

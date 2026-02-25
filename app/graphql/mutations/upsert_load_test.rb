@@ -20,9 +20,9 @@ module Mutations
 
       load_test = if id
                     profile.load_tests.find_by(id: id)
-                  else
+      else
                     profile.load_tests.build
-                  end
+      end
 
       raise GraphQL::ExecutionError, "Load test not found" if id && load_test.nil?
 

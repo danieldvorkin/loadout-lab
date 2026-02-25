@@ -17,10 +17,10 @@ module Mutations
 
     def resolve(component_id:, listing_type:, condition:, title:, build_component_id: nil,
                 description: nil, price_cents: nil, location: nil, contact_info: nil, image_url: nil)
-      raise GraphQL::ExecutionError, 'You must be logged in' unless context[:current_user]
+      raise GraphQL::ExecutionError, "You must be logged in" unless context[:current_user]
 
       component = Component.find_by(id: component_id)
-      raise GraphQL::ExecutionError, 'Component not found' unless component
+      raise GraphQL::ExecutionError, "Component not found" unless component
 
       # Map string enums to integer values
       listing_type_val = Listing.listing_types[listing_type]
@@ -46,7 +46,7 @@ module Mutations
       if listing.save
         listing
       else
-        raise GraphQL::ExecutionError, listing.errors.full_messages.join(', ')
+        raise GraphQL::ExecutionError, listing.errors.full_messages.join(", ")
       end
     end
   end

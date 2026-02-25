@@ -15,7 +15,7 @@ class CreateLoadTests < ActiveRecord::Migration[8.1]
     end
 
     add_index :load_tests,
-              [:ballistic_profile_id, :charge_grains, :distance_yards],
+              [ :ballistic_profile_id, :charge_grains, :distance_yards ],
               name: "idx_load_tests_on_profile_charge_distance"
   end
 end

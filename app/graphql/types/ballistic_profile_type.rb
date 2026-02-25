@@ -34,13 +34,13 @@ module Types
     field :notes, String
 
     # Dope data
-    field :ballistic_drops, [Types::BallisticDropType], null: false
+    field :ballistic_drops, [ Types::BallisticDropType ], null: false
 
     # Load development / charge tests
-    field :load_tests, [Types::LoadTestType], null: false
+    field :load_tests, [ Types::LoadTestType ], null: false
 
     # Constants
-    field :available_calibers, [String], null: false
+    field :available_calibers, [ String ], null: false
 
     def available_calibers
       BallisticProfile::CALIBERS

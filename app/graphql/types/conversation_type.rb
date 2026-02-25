@@ -6,7 +6,7 @@ module Types
     field :listing,          Types::ListingType,              null: false
     field :buyer,            Types::UserType,                 null: false
     field :seller,           Types::UserType,                 null: false
-    field :messages,         [Types::MessageType],            null: false
+    field :messages,         [ Types::MessageType ],            null: false
     field :latest_message,   Types::MessageType,              null: true
     field :last_message_at,  GraphQL::Types::ISO8601DateTime, null: true
     field :unread_count,     Integer,                         null: false

@@ -5,11 +5,11 @@ module Mutations
     argument :id, ID, required: true
 
     field :success, Boolean, null: false
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(id:)
       load_test = find_load_test(id)
-      return { success: false, errors: ["Load test not found"] } unless load_test
+      return { success: false, errors: [ "Load test not found" ] } unless load_test
 
       load_test.destroy!
       { success: true, errors: [] }

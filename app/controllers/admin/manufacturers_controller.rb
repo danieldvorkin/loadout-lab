@@ -1,16 +1,16 @@
 module Admin
   class ManufacturersController < BaseController
-    before_action :set_manufacturer, only: [:show, :edit, :update, :destroy]
+    before_action :set_manufacturer, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @manufacturers = Manufacturer.order(:name)
-      
+
       # Search by name
       if params[:search].present?
         search_term = "%#{params[:search].downcase}%"
         @manufacturers = @manufacturers.where("LOWER(name) LIKE ?", search_term)
       end
-      
+
       @manufacturers = @manufacturers.page(params[:page]).per(20)
     end
 
@@ -25,7 +25,7 @@ module Admin
     def create
       @manufacturer = Manufacturer.new(manufacturer_params)
       if @manufacturer.save
-        redirect_to "/admin/manufacturers/#{@manufacturer.id}", notice: 'Manufacturer created successfully.'
+        redirect_to "/admin/manufacturers/#{@manufacturer.id}", notice: "Manufacturer created successfully."
       else
         render :new, status: :unprocessable_entity
       end
@@ -36,7 +36,7 @@ module Admin
 
     def update
       if @manufacturer.update(manufacturer_params)
-        redirect_to "/admin/manufacturers/#{@manufacturer.id}", notice: 'Manufacturer updated successfully.'
+        redirect_to "/admin/manufacturers/#{@manufacturer.id}", notice: "Manufacturer updated successfully."
       else
         render :edit, status: :unprocessable_entity
       end
@@ -44,7 +44,7 @@ module Admin
 
     def destroy
       @manufacturer.destroy
-      redirect_to '/admin/manufacturers', notice: 'Manufacturer deleted successfully.'
+      redirect_to "/admin/manufacturers", notice: "Manufacturer deleted successfully."
     end
 
     private

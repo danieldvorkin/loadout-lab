@@ -17,14 +17,14 @@ module Mutations
         password: password,
         password_confirmation: password_confirmation,
         username: username,
-        full_name: full_name || '',
-        phone_number: phone_number || ''
+        full_name: full_name || "",
+        phone_number: phone_number || ""
       )
 
       if user.save
         # Generate JWT token for the new user
         token = generate_jwt_token(user)
-        
+
         {
           token: token,
           user: user,

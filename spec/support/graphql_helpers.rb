@@ -9,16 +9,16 @@ module GraphqlHelpers
 
   def graphql_request(query:, variables: {}, user: nil)
     headers = { "Content-Type" => "application/json" }
-    
+
     if user
       token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
       headers["Authorization"] = "Bearer #{token}"
     end
 
-    post "/graphql", 
+    post "/graphql",
       params: { query: query, variables: variables }.to_json,
       headers: headers
-    
+
     JSON.parse(response.body)
   end
 end

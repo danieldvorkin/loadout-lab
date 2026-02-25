@@ -11,7 +11,7 @@ RSpec.describe User, type: :model do
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
     it { should validate_length_of(:bio).is_at_most(500) }
-    
+
     it 'validates website format when present' do
       user = build(:user, website: 'not-a-url')
       expect(user).not_to be_valid
@@ -99,25 +99,25 @@ RSpec.describe User, type: :model do
 
       it 'returns existing user if found by uid' do
         existing = create(:user, :oauth_user, uid: 'google123', provider: 'google')
-        
+
         user = User.from_google(
           uid: 'google123',
           email: 'different@gmail.com',
           full_name: 'Some Name'
         )
-        
+
         expect(user).to eq(existing)
       end
 
       it 'links existing user if found by email' do
         existing = create(:user, email: 'existing@gmail.com')
-        
+
         user = User.from_google(
           uid: 'google123',
           email: 'existing@gmail.com',
           full_name: 'Some Name'
         )
-        
+
         expect(user).to eq(existing.reload)
         expect(user.provider).to eq('google')
         expect(user.uid).to eq('google123')
@@ -129,7 +129,7 @@ RSpec.describe User, type: :model do
           email: 'john.doe@gmail.com',
           full_name: 'John Doe'
         )
-        
+
         expect(user.username).to start_with('johndoe')
       end
     end

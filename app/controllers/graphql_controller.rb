@@ -1,7 +1,7 @@
 class GraphqlController < ApplicationController
   # Skip authentication for GraphQL - we handle auth in mutations
   # This allows login/register mutations to work without a token
-  skip_before_action :authenticate_user!, only: [:execute], raise: false
+  skip_before_action :authenticate_user!, only: [ :execute ], raise: false
 
   def execute
     result = PrsBuilderApiSchema.execute(
@@ -41,6 +41,6 @@ class GraphqlController < ApplicationController
     logger.error e.message
     logger.error e.backtrace.join("\n")
 
-    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: :internal_server_error
+    render json: { errors: [ { message: e.message, backtrace: e.backtrace } ], data: {} }, status: :internal_server_error
   end
 end

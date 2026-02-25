@@ -5,13 +5,13 @@ module Mutations
     argument :id, ID, required: true
 
     field :success, Boolean, null: false
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(id:)
-      raise GraphQL::ExecutionError, 'You must be logged in' unless context[:current_user]
+      raise GraphQL::ExecutionError, "You must be logged in" unless context[:current_user]
 
       listing = context[:current_user].listings.find_by(id: id)
-      raise GraphQL::ExecutionError, 'Listing not found or does not belong to you' unless listing
+      raise GraphQL::ExecutionError, "Listing not found or does not belong to you" unless listing
 
       if listing.destroy
         { success: true, errors: [] }

@@ -17,14 +17,14 @@ namespace :redhawk do
   end
 
   desc "Import only a specific category, e.g. rake redhawk:import_category[rifle-parts]"
-  task :import_category, [:slug] => :environment do |_t, args|
+  task :import_category, [ :slug ] => :environment do |_t, args|
     slug = args[:slug]
     if slug.blank? || !RedHawkRiflesImporter::CATEGORIES.key?(slug)
       puts "Available categories:"
       RedHawkRiflesImporter::CATEGORIES.each_key { |k| puts "  #{k}" }
       exit 1
     end
-    RedHawkRiflesImporter.run!(categories: [slug])
+    RedHawkRiflesImporter.run!(categories: [ slug ])
   end
 
   desc "Show component counts by type"

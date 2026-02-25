@@ -14,8 +14,8 @@ class CreateProjectiles < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :projectiles, [:caliber_inches, :manufacturer], name: "idx_projectiles_on_caliber_and_mfr"
+    add_index :projectiles, [ :caliber_inches, :manufacturer ], name: "idx_projectiles_on_caliber_and_mfr"
     add_index :projectiles, :manufacturer
-    add_index :projectiles, [:manufacturer, :name], unique: true, name: "idx_projectiles_on_mfr_and_name"
+    add_index :projectiles, [ :manufacturer, :name ], unique: true, name: "idx_projectiles_on_mfr_and_name"
   end
 end

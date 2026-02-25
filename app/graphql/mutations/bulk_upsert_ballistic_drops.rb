@@ -19,15 +19,15 @@ module Mutations
     end
 
     argument :ballistic_profile_id, ID, required: true
-    argument :drops, [DropInput], required: true
+    argument :drops, [ DropInput ], required: true
 
     field :ballistic_profile, Types::BallisticProfileType, null: true
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(ballistic_profile_id:, drops:)
       profile = find_profile(ballistic_profile_id)
       unless profile
-        return { ballistic_profile: nil, errors: ["Ballistic profile not found"] }
+        return { ballistic_profile: nil, errors: [ "Ballistic profile not found" ] }
       end
 
       errors = []

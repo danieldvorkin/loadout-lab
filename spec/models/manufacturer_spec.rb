@@ -9,7 +9,7 @@ RSpec.describe Manufacturer, type: :model do
 
   describe 'validations' do
     subject { build(:manufacturer) }
-    
+
     it { should validate_presence_of(:name) }
     it { should validate_uniqueness_of(:name) }
   end

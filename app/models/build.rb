@@ -13,12 +13,12 @@ class Build < ApplicationRecord
 
   # Calculate totals from components
   def calculate_totals!
-    self.total_weight_oz = build_components.joins(:component).sum('components.weight_oz')
-    self.total_cost_cents = build_components.joins(:component).sum('components.msrp_cents')
+    self.total_weight_oz = build_components.joins(:component).sum("components.weight_oz")
+    self.total_cost_cents = build_components.joins(:component).sum("components.msrp_cents")
     self.new_cost_cents = build_components
                          .joins(:component)
                          .where(build_components: { owned: false })
-                         .sum('components.msrp_cents')
+                         .sum("components.msrp_cents")
     save!
   end
 

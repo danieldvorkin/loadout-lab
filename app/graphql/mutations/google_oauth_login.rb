@@ -15,11 +15,11 @@ module Mutations
       payload = fetch_google_user_info(access_token)
 
       unless payload
-        return { token: nil, user: nil, errors: ["Invalid Google token"] }
+        return { token: nil, user: nil, errors: [ "Invalid Google token" ] }
       end
 
       unless payload["email"].present?
-        return { token: nil, user: nil, errors: ["Google account did not provide an email address"] }
+        return { token: nil, user: nil, errors: [ "Google account did not provide an email address" ] }
       end
 
       user = User.from_google(
@@ -34,7 +34,7 @@ module Mutations
     rescue ActiveRecord::RecordInvalid => e
       { token: nil, user: nil, errors: e.record.errors.full_messages }
     rescue StandardError => e
-      { token: nil, user: nil, errors: ["Authentication failed: #{e.message}"] }
+      { token: nil, user: nil, errors: [ "Authentication failed: #{e.message}" ] }
     end
 
     private

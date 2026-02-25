@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   include Pundit::Authorization
-  
+
   before_action :authenticate_user!
 
   respond_to :json
@@ -9,29 +9,29 @@ class ApplicationController < ActionController::API
 
   def authenticate_user!
     return if current_user
-    render json: { errors: ['You need to sign in or sign up before continuing.'] }, status: :unauthorized
+    render json: { errors: [ "You need to sign in or sign up before continuing." ] }, status: :unauthorized
   end
 
   def current_user
     return @current_user if defined?(@current_user)
-    
+
     @current_user = nil
-    token = request.headers['Authorization']&.split(' ')&.last
-    
+    token = request.headers["Authorization"]&.split(" ")&.last
+
     return nil unless token
 
     begin
       # Use the same secret as Devise JWT config
-      jwt_secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { Rails.application.credentials.devise_jwt_secret_key! }
-      
+      jwt_secret = ENV.fetch("DEVISE_JWT_SECRET_KEY") { Rails.application.credentials.devise_jwt_secret_key! }
+
       jwt_payload = JWT.decode(
         token,
         jwt_secret,
         true,
-        { algorithm: 'HS256' }
+        { algorithm: "HS256" }
       ).first
 
-      @current_user = User.find_by(id: jwt_payload['sub'], jti: jwt_payload['jti'])
+      @current_user = User.find_by(id: jwt_payload["sub"], jti: jwt_payload["jti"])
     rescue JWT::DecodeError, JWT::ExpiredSignature => e
       Rails.logger.debug "JWT Error: #{e.message}"
       nil

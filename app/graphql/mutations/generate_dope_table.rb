@@ -7,12 +7,12 @@ module Mutations
     argument :step, Integer, required: false
 
     field :ballistic_profile, Types::BallisticProfileType, null: true
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(ballistic_profile_id:, max_distance: 1200, step: 25)
       profile = find_profile(ballistic_profile_id)
       unless profile
-        return { ballistic_profile: nil, errors: ["Ballistic profile not found"] }
+        return { ballistic_profile: nil, errors: [ "Ballistic profile not found" ] }
       end
 
       # Validate required fields for calculation
@@ -24,7 +24,7 @@ module Mutations
       if missing.any?
         return {
           ballistic_profile: nil,
-          errors: ["Missing required data for calculation: #{missing.join(', ')}. Please fill in all bullet and rifle data."]
+          errors: [ "Missing required data for calculation: #{missing.join(', ')}. Please fill in all bullet and rifle data." ]
         }
       end
 
@@ -33,7 +33,7 @@ module Mutations
 
       { ballistic_profile: profile, errors: [] }
     rescue ArgumentError => e
-      { ballistic_profile: nil, errors: [e.message] }
+      { ballistic_profile: nil, errors: [ e.message ] }
     rescue ActiveRecord::RecordInvalid => e
       { ballistic_profile: nil, errors: e.record.errors.full_messages }
     end

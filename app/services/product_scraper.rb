@@ -133,7 +133,7 @@ class ProductScraper
     slug = slugify(query)
     direct_paths = [
       "/products/#{slug}",
-      "/product/#{slug}",
+      "/product/#{slug}"
     ]
     direct_paths.each do |path|
       url = "#{base_url.chomp('/')}#{path}"
@@ -373,7 +373,7 @@ class ProductScraper
       # General - price in a span/div near a dollar sign
       />\s*\$([\d,]+\.\d{2})\s*</,
       # data-price attribute
-      /data-price=["']([\d.]+)["']/i,
+      /data-price=["']([\d.]+)["']/i
     ]
 
     price_patterns.each do |pattern|
@@ -405,7 +405,7 @@ class ProductScraper
       /(?:src|data-src)=["'](https:\/\/res\.cloudinary\.com\/[^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i,
       # Generic product image container patterns
       /class=["'][^"']*product[_-]?image[^"']*["'][^>]*(?:src|data-src)=["']([^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i,
-      /id=["'][^"']*product[_-]?image[^"']*["'][^>]*src=["']([^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i,
+      /id=["'][^"']*product[_-]?image[^"']*["'][^>]*src=["']([^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i
     ]
 
     image_patterns.each do |pattern|
@@ -480,7 +480,7 @@ class ProductScraper
       json_products.each do |p|
         title = (p["title"] || "").downcase
         match_count = query_words.count { |w| title.include?(w) }
-        if match_count >= [query_words.length * 0.6, 2].min.to_i
+        if match_count >= [ query_words.length * 0.6, 2 ].min.to_i
           return normalize_shopify_product(p, base_url)
         end
       end
@@ -517,7 +517,7 @@ class ProductScraper
       availability: first_variant["available"],
       source_url: "#{base_url.chomp('/')}/products/#{product_data['handle']}",
       handle: product_data["handle"],
-      variants: variants.map { |v| { name: v["title"], price: v["price"]&.to_f, sku: v["sku"], available: v["available"] } },
+      variants: variants.map { |v| { name: v["title"], price: v["price"]&.to_f, sku: v["sku"], available: v["available"] } }
     }.compact
   end
 
@@ -574,7 +574,7 @@ class ProductScraper
       description: data["short_description"]&.gsub(/<[^>]+>/, "")&.strip&.truncate(500),
       sku: data["sku"],
       source_url: data["permalink"] || "#{base_url.chomp('/')}/product/#{data['slug']}",
-      availability: data["is_in_stock"],
+      availability: data["is_in_stock"]
     }.compact
   end
 
@@ -593,7 +593,7 @@ class ProductScraper
 
     # Strategy 2: Crawl main pages for product links
     if urls.empty?
-      crawl_pages = ["", "/shop", "/products", "/collections", "/product-category"]
+      crawl_pages = [ "", "/shop", "/products", "/collections", "/product-category" ]
       crawl_pages.each do |path|
         page_url = "#{base_url.chomp('/')}#{path}"
         html = fetch_page(page_url)
@@ -622,7 +622,7 @@ class ProductScraper
 
   def parse_sitemap(base_url)
     urls = []
-    sitemap_paths = ["/sitemap.xml", "/sitemap_index.xml", "/sitemap_products_1.xml"]
+    sitemap_paths = [ "/sitemap.xml", "/sitemap_index.xml", "/sitemap_products_1.xml" ]
 
     sitemap_paths.each do |path|
       url = "#{base_url.chomp('/')}#{path}"

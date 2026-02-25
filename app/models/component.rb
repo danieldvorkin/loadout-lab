@@ -19,7 +19,7 @@ class Component < ApplicationRecord
   validates :type, inclusion: { in: TYPES }, allow_nil: true
 
   # Default scope to exclude discontinued items
-  scope :active, -> { where(discontinued: [false, nil]) }
+  scope :active, -> { where(discontinued: [ false, nil ]) }
   scope :discontinued, -> { where(discontinued: true) }
   scope :by_type, ->(type) { where(type: type) }
 end

@@ -24,7 +24,7 @@ class PopulateImagesJob < ApplicationJob
   # =========================================================================
 
   def populate_manufacturer_images
-    manufacturers = Manufacturer.where(image_url: [nil, ""])
+    manufacturers = Manufacturer.where(image_url: [ nil, "" ])
     total = manufacturers.count
     updated = 0
 
@@ -70,7 +70,7 @@ class PopulateImagesJob < ApplicationJob
   # =========================================================================
 
   def populate_component_images
-    components = Component.where(image_url: [nil, ""]).includes(:manufacturer)
+    components = Component.where(image_url: [ nil, "" ]).includes(:manufacturer)
     total = components.count
     updated = 0
     skipped = 0

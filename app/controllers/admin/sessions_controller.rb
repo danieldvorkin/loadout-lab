@@ -1,11 +1,11 @@
 module Admin
   class SessionsController < ActionController::Base
-    layout 'admin'
+    layout "admin"
 
     helper_method :current_user
 
     def new
-      redirect_to '/admin' if current_user&.admin?
+      redirect_to "/admin" if current_user&.admin?
     end
 
     def create
@@ -13,16 +13,16 @@ module Admin
 
       if user&.valid_password?(params[:password]) && user.admin?
         session[:admin_user_id] = user.id
-        redirect_to '/admin', notice: 'Logged in successfully.'
+        redirect_to "/admin", notice: "Logged in successfully."
       else
-        flash.now[:alert] = 'Invalid email/password or not an admin.'
+        flash.now[:alert] = "Invalid email/password or not an admin."
         render :new, status: :unprocessable_entity
       end
     end
 
     def destroy
       session.delete(:admin_user_id)
-      redirect_to '/admin/login', notice: 'Logged out successfully.'
+      redirect_to "/admin/login", notice: "Logged out successfully."
     end
 
     private

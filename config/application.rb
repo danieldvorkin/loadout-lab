@@ -15,7 +15,7 @@ module PrsBuilderApi
       # GraphQL-Ruby query log tags:
       current_graphql_operation: -> { GraphQL::Current.operation_name },
       current_graphql_field: -> { GraphQL::Current.field&.path },
-      current_dataloader_source: -> { GraphQL::Current.dataloader_source_class },
+      current_dataloader_source: -> { GraphQL::Current.dataloader_source_class }
     ]
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
@@ -40,7 +40,7 @@ module PrsBuilderApi
 
     # Add session and cookie middleware for admin panel
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore, key: '_loadout_lab_admin_session'
+    config.middleware.use ActionDispatch::Session::CookieStore, key: "_loadout_lab_admin_session"
     config.middleware.use ActionDispatch::Flash
     config.middleware.use Rack::MethodOverride
   end

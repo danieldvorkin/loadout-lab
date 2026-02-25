@@ -19,7 +19,7 @@ module Types
     field :role, String, null: false
     field :is_admin, Boolean, null: false
     field :is_oauth_user, Boolean, null: false
-    field :builds, [Types::BuildType], null: false
+    field :builds, [ Types::BuildType ], null: false
     field :builds_count, Integer, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false

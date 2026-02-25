@@ -39,9 +39,9 @@ namespace :images do
 
   def print_stats
     total_components = Component.count
-    components_with_images = Component.where.not(image_url: [nil, ""]).count
+    components_with_images = Component.where.not(image_url: [ nil, "" ]).count
     total_manufacturers = Manufacturer.count
-    manufacturers_with_images = Manufacturer.where.not(image_url: [nil, ""]).count
+    manufacturers_with_images = Manufacturer.where.not(image_url: [ nil, "" ]).count
 
     puts ""
     puts "📊 Image Coverage Stats:"
@@ -51,12 +51,12 @@ namespace :images do
 
     if manufacturers_with_images > 0
       puts "  Manufacturers WITH images:"
-      Manufacturer.where.not(image_url: [nil, ""]).order(:name).each do |m|
+      Manufacturer.where.not(image_url: [ nil, "" ]).order(:name).each do |m|
         puts "    ✅ #{m.name}"
       end
     end
 
-    missing_by_mfr = Component.where(image_url: [nil, ""])
+    missing_by_mfr = Component.where(image_url: [ nil, "" ])
                               .joins(:manufacturer)
                               .group("manufacturers.name")
                               .count

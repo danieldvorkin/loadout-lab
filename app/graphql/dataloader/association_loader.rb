@@ -31,7 +31,7 @@ module Dataloader
     def fetch(records)
       ::ActiveRecord::Associations::Preloader.new(
         records: records,
-        associations: [@association_name]
+        associations: [ @association_name ]
       ).call
       records.map { |record| record.public_send(@association_name) }
     end

@@ -276,28 +276,28 @@ class RedHawkRiflesImporter
   # Order matters: more specific patterns before general ones.
   TYPE_RULES = [
     # ── Optic mounting hardware (must come before scope/action/ring generics) ──
-    [/scope\s+ring\s+mount|one[- ]piece\s+scope\s+ring|arca\s+plate|scope\s+rings?\s+-\s+\w/i,      "rings"],
-    [/picatinny\s+base|steel\s+base.*(?:short|long)\s+action.*moa|scope\s+base|scope\s+mount\b/i,   "mount"],
-    [/\barca\b/i,                                                                                     "mount"],
+    [ /scope\s+ring\s+mount|one[- ]piece\s+scope\s+ring|arca\s+plate|scope\s+rings?\s+-\s+\w/i,      "rings" ],
+    [ /picatinny\s+base|steel\s+base.*(?:short|long)\s+action.*moa|scope\s+base|scope\s+mount\b/i,   "mount" ],
+    [ /\barca\b/i,                                                                                     "mount" ],
     # ── Chassis & stocks ──
-    [/\bchassis\b/i,                                                                                  "chassis"],
-    [/\bstock\b|buttstock/i,                                                                          "stock"],
+    [ /\bchassis\b/i,                                                                                  "chassis" ],
+    [ /\bstock\b|buttstock/i,                                                                          "stock" ],
     # ── Barrels ──
-    [/barrel|prefit/i,                                                                                "barrel"],
+    [ /barrel|prefit/i,                                                                                "barrel" ],
     # ── Muzzle devices ──
-    [/muzzle\s+brake|muzzle\s+device|flash\s+hider|compensator/i,                                   "muzzle_device"],
+    [ /muzzle\s+brake|muzzle\s+device|flash\s+hider|compensator/i,                                   "muzzle_device" ],
     # ── Triggers ──
-    [/\btrigger\b(?!\s+pin|guard)/i,                                                                  "trigger"],
+    [ /\btrigger\b(?!\s+pin|guard)/i,                                                                  "trigger" ],
     # ── Actions (receivers) — must come AFTER mounts/bases to avoid false matches ──
-    [/\baction\b|\breceiver\b/i,                                                                      "action"],
+    [ /\baction\b|\breceiver\b/i,                                                                      "action" ],
     # ── Scopes & optics ──
-    [/rifle\s+scope|riflescope|\bscope\b|\boptic\b/i,                                               "scope"],
+    [ /rifle\s+scope|riflescope|\bscope\b|\boptic\b/i,                                               "scope" ],
     # ── Rings (generic fallback) ──
-    [/\bring\b.*(?:mount|scope)|ring\s+set/i,                                                        "rings"],
+    [ /\bring\b.*(?:mount|scope)|ring\s+set/i,                                                        "rings" ],
     # ── Magazines ──
-    [/\bmagazine\b|\bmag\b(?!\w)/i,                                                                  "magazine"],
+    [ /\bmagazine\b|\bmag\b(?!\w)/i,                                                                  "magazine" ],
     # ── Bipods ──
-    [/\bbipod\b/i,                                                                                    "bipod"],
+    [ /\bbipod\b/i,                                                                                    "bipod" ]
   ].freeze
 
   # Products matching any of these patterns are skipped entirely
@@ -425,7 +425,7 @@ class RedHawkRiflesImporter
   # breadcrumbs, related links, or navigation in the skeleton HTML.
   def scan_category_anchors(slug)
     found = Set.new
-    max_scan_pages = [MAX_PAGES, 3].min
+    max_scan_pages = [ MAX_PAGES, 3 ].min
 
     max_scan_pages.times do |i|
       page = i + 1
@@ -538,7 +538,7 @@ class RedHawkRiflesImporter
       /(?:data-src|src)=["'](https?:\/\/cdn\d*\.bigcommerce\.com\/[^"']+\/products\/\d+\/images\/[^"']+\.(?:jpg|jpeg|png|webp))(?:\?[^"']*)?["']/i,
       /"image"\s*:\s*"(https?:\/\/cdn\d*\.bigcommerce\.com\/[^"]+\.(?:jpg|jpeg|png|webp))"/i,
       /<meta[^>]*property=["']og:image["'][^>]*content=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp))[^"']*["']/i,
-      /(?:data-src|src)=["'](https?:\/\/cdn\d*\.bigcommerce\.com\/[^"']+\.(?:jpg|jpeg|png|webp))(?:\?[^"']*)?["']/i,
+      /(?:data-src|src)=["'](https?:\/\/cdn\d*\.bigcommerce\.com\/[^"']+\.(?:jpg|jpeg|png|webp))(?:\?[^"']*)?["']/i
     ]
     patterns.each do |p|
       m = html.match(p)
@@ -570,7 +570,7 @@ class RedHawkRiflesImporter
     # HTML price patterns
     [
       />\s*\$([\d,]+\.\d{2})\s*</,
-      /data-product-price=["']([\d,]+\.?\d*)["']/i,
+      /data-product-price=["']([\d,]+\.?\d*)["']/i
     ].each do |p|
       m = html.match(p)
       next unless m
@@ -630,7 +630,7 @@ class RedHawkRiflesImporter
 
     # Caliber – decimal format (.224, .264, .284, .300, .308, .338, .300-.308, etc.)
     if (m = name.match(/(\.\d{3})\s*[-–]?\s*(\.\d{3})?/))
-      specs[:caliber] = [m[1], m[2]].compact.uniq.join("/")
+      specs[:caliber] = [ m[1], m[2] ].compact.uniq.join("/")
     end
 
     # Caliber in mm parentheses – (6.5mm), (7mm), (8mm)

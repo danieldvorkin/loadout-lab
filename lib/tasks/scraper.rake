@@ -2,7 +2,7 @@
 
 namespace :scraper do
   desc "Test the universal scraper on a single product URL"
-  task :product, [:url] => :environment do |_t, args|
+  task :product, [ :url ] => :environment do |_t, args|
     url = args[:url]
     abort "Usage: bin/rails scraper:product[https://example.com/product-page]" if url.blank?
 
@@ -22,7 +22,7 @@ namespace :scraper do
   end
 
   desc "Detect what e-commerce platform a site uses"
-  task :detect, [:url] => :environment do |_t, args|
+  task :detect, [ :url ] => :environment do |_t, args|
     url = args[:url]
     abort "Usage: bin/rails scraper:detect[https://example.com]" if url.blank?
 
@@ -32,7 +32,7 @@ namespace :scraper do
   end
 
   desc "Search a site for a product by name"
-  task :search, [:url, :query] => :environment do |_t, args|
+  task :search, [ :url, :query ] => :environment do |_t, args|
     url = args[:url]
     query = args[:query]
     abort "Usage: bin/rails scraper:search[https://example.com,'product name']" if url.blank? || query.blank?
@@ -53,7 +53,7 @@ namespace :scraper do
   end
 
   desc "Scrape all products from a site (limited)"
-  task :site, [:url, :limit] => :environment do |_t, args|
+  task :site, [ :url, :limit ] => :environment do |_t, args|
     url = args[:url]
     limit = (args[:limit] || 10).to_i
     abort "Usage: bin/rails scraper:site[https://example.com,10]" if url.blank?
@@ -80,7 +80,7 @@ namespace :scraper do
     puts "🔍 Testing scraper against all manufacturer websites...\n\n"
     scraper = ProductScraper.new
 
-    Manufacturer.where.not(website: [nil, ""]).order(:name).each do |m|
+    Manufacturer.where.not(website: [ nil, "" ]).order(:name).each do |m|
       print "#{m.name} (#{m.website})... "
       begin
         platform = scraper.detect_platform(m.website)

@@ -54,7 +54,7 @@ RSpec.describe "UpdateUserProfile mutation", type: :request do
 
       expect(result['errors']).to be_nil
       data = result.dig('data', 'updateUserProfile')
-      
+
       expect(data['errors']).to be_empty
       expect(data['user']['fullName']).to eq('John Shooter')
       expect(data['user']['bio']).to eq('PRS competitor')
@@ -111,7 +111,7 @@ RSpec.describe "UpdateUserProfile mutation", type: :request do
 
     it 'returns errors for duplicate username' do
       create(:user, username: 'taken_username')
-      
+
       result = graphql_request(
         query: mutation,
         variables: { username: 'taken_username' },

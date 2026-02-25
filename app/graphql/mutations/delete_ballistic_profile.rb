@@ -5,7 +5,7 @@ module Mutations
     argument :id, ID, required: true
 
     field :success, Boolean, null: false
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(id:)
       profile = BallisticProfile.joins(build: :user)
@@ -13,7 +13,7 @@ module Mutations
                                 .find_by(id: id)
 
       unless profile
-        return { success: false, errors: ["Ballistic profile not found"] }
+        return { success: false, errors: [ "Ballistic profile not found" ] }
       end
 
       profile.destroy!

@@ -19,13 +19,13 @@ module Mutations
 
     # Return fields
     field :user, Types::UserType, null: true
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(**args)
       current_user = context[:current_user]
 
       unless current_user
-        return { user: nil, errors: ["You must be logged in to update your profile"] }
+        return { user: nil, errors: [ "You must be logged in to update your profile" ] }
       end
 
       # Filter out nil values to only update provided fields

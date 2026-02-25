@@ -15,10 +15,10 @@ module Mutations
 
     def resolve(id:, status: nil, title: nil, description: nil, price_cents: nil,
                 location: nil, contact_info: nil, image_url: nil)
-      raise GraphQL::ExecutionError, 'You must be logged in' unless context[:current_user]
+      raise GraphQL::ExecutionError, "You must be logged in" unless context[:current_user]
 
       listing = context[:current_user].listings.find_by(id: id)
-      raise GraphQL::ExecutionError, 'Listing not found or does not belong to you' unless listing
+      raise GraphQL::ExecutionError, "Listing not found or does not belong to you" unless listing
 
       attrs = {}
       attrs[:title] = title if title
@@ -37,7 +37,7 @@ module Mutations
       if listing.update(attrs)
         listing
       else
-        raise GraphQL::ExecutionError, listing.errors.full_messages.join(', ')
+        raise GraphQL::ExecutionError, listing.errors.full_messages.join(", ")
       end
     end
   end

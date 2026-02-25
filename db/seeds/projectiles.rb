@@ -266,7 +266,7 @@ module Seeds
           base_type: "boat_tail", recommended_twist: "1:10" },
         { manufacturer: "Barnes", name: "155gr Match Burner OTM", caliber_inches: 0.308,
           weight_grains: 155, bc_g1: 0.431, bc_g7: 0.223, bullet_type: "Match Burner OTM",
-          base_type: "boat_tail", recommended_twist: "1:12" },
+          base_type: "boat_tail", recommended_twist: "1:12" }
       ]
 
       created = 0

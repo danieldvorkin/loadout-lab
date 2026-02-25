@@ -10,8 +10,8 @@ module Types
       context.schema.object_from_id(id, context)
     end
 
-    field :nodes, [Types::NodeType, null: true], null: true, description: "Fetches a list of objects given a list of IDs." do
-      argument :ids, [ID], required: true, description: "IDs of the objects."
+    field :nodes, [ Types::NodeType, null: true ], null: true, description: "Fetches a list of objects given a list of IDs." do
+      argument :ids, [ ID ], required: true, description: "IDs of the objects."
     end
 
     def nodes(ids:)
@@ -19,7 +19,7 @@ module Types
     end
 
     # Fetch all components with filtering
-    field :components, [Types::ComponentType], null: false, description: "Fetch all components with optional filtering" do
+    field :components, [ Types::ComponentType ], null: false, description: "Fetch all components with optional filtering" do
       argument :search, String, required: false, description: "Search by component name"
       argument :type, String, required: false, description: "Filter by component type"
       argument :manufacturer_id, ID, required: false, description: "Filter by manufacturer"
@@ -30,56 +30,56 @@ module Types
 
     def components(search: nil, type: nil, manufacturer_id: nil, active_only: nil, limit: nil, offset: nil)
       result = Component.includes(:manufacturer).order(:name)
-      
+
       if search.present?
         search_term = "%#{search.downcase}%"
         result = result.where("LOWER(name) LIKE ?", search_term)
       end
-      
+
       result = result.where(type: type) if type.present?
       result = result.where(manufacturer_id: manufacturer_id) if manufacturer_id.present?
-      result = result.where(discontinued: [false, nil]) if active_only
-      
+      result = result.where(discontinued: [ false, nil ]) if active_only
+
       result = result.offset(offset) if offset.present?
       result = result.limit(limit) if limit.present?
-      
+
       result
     end
 
     # Fetch all manufacturers with filtering
-    field :manufacturers, [Types::ManufacturerType], null: false, description: "Fetch all manufacturers with optional filtering" do
+    field :manufacturers, [ Types::ManufacturerType ], null: false, description: "Fetch all manufacturers with optional filtering" do
       argument :search, String, required: false, description: "Search by manufacturer name"
       argument :limit, Integer, required: false, description: "Limit number of results"
     end
 
     def manufacturers(search: nil, limit: nil)
       result = Manufacturer.order(:name)
-      
+
       if search.present?
         search_term = "%#{search.downcase}%"
         result = result.where("LOWER(name) LIKE ?", search_term)
       end
-      
+
       result = result.limit(limit) if limit.present?
       result
     end
 
     # Fetch current user's builds with filtering
-    field :builds, [Types::BuildType], null: false, description: "Fetch current user's builds with optional filtering" do
+    field :builds, [ Types::BuildType ], null: false, description: "Fetch current user's builds with optional filtering" do
       argument :search, String, required: false, description: "Search by build name"
       argument :discipline, String, required: false, description: "Filter by discipline"
     end
 
     def builds(search: nil, discipline: nil)
       return [] unless context[:current_user]
-      
+
       result = context[:current_user].builds.order(created_at: :desc)
-      
+
       if search.present?
         search_term = "%#{search.downcase}%"
         result = result.where("LOWER(name) LIKE ?", search_term)
       end
-      
+
       result = result.where(discipline: discipline) if discipline.present?
       result
     end
@@ -120,28 +120,28 @@ module Types
     end
 
     # Get list of available component types
-    field :component_types, [String], null: false, description: "Fetch list of all component types"
+    field :component_types, [ String ], null: false, description: "Fetch list of all component types"
 
     def component_types
       Component::TYPES
     end
 
     # Get list of available disciplines
-    field :disciplines, [String], null: false, description: "Fetch list of all build disciplines"
+    field :disciplines, [ String ], null: false, description: "Fetch list of all build disciplines"
 
     def disciplines
       Build::DISCIPLINES
     end
 
     # Get list of available calibers
-    field :calibers, [String], null: false, description: "Fetch list of common PRS/long-range calibers"
+    field :calibers, [ String ], null: false, description: "Fetch list of common PRS/long-range calibers"
 
     def calibers
       BallisticProfile::CALIBERS
     end
 
     # Fetch projectiles with optional filtering by caliber/manufacturer
-    field :projectiles, [Types::ProjectileType], null: false,
+    field :projectiles, [ Types::ProjectileType ], null: false,
           description: "Fetch projectile catalog with optional caliber/manufacturer filtering" do
       argument :caliber, String, required: false, description: "Filter by cartridge name (e.g., '6.5 Creedmoor')"
       argument :caliber_inches, Float, required: false, description: "Filter by bullet diameter in inches"
@@ -162,7 +162,7 @@ module Types
     end
 
     # Get list of projectile manufacturers
-    field :projectile_manufacturers, [String], null: false,
+    field :projectile_manufacturers, [ String ], null: false,
           description: "Fetch list of projectile manufacturers in the catalog"
 
     def projectile_manufacturers
@@ -178,7 +178,7 @@ module Types
     end
 
     # Fetch ballistic profiles for a build
-    field :ballistic_profiles, [Types::BallisticProfileType], null: false,
+    field :ballistic_profiles, [ Types::BallisticProfileType ], null: false,
           description: "Fetch ballistic profiles for a specific build" do
       argument :build_id, ID, required: true
     end
@@ -204,7 +204,7 @@ module Types
     end
 
     # Marketplace listing queries
-    field :listings, [Types::ListingType], null: false,
+    field :listings, [ Types::ListingType ], null: false,
           description: "Fetch active marketplace listings" do
       argument :listing_type, String, required: false, description: "Filter by 'showcase' or 'for_sale'"
       argument :search, String, required: false, description: "Search by title or component name"
@@ -235,7 +235,7 @@ module Types
       Listing.active.find_by(id: id)
     end
 
-    field :my_listings, [Types::ListingType], null: false,
+    field :my_listings, [ Types::ListingType ], null: false,
           description: "Fetch the current user's listings (all statuses)"
 
     def my_listings
@@ -244,7 +244,7 @@ module Types
     end
 
     # Conversation queries
-    field :my_conversations, [Types::ConversationType], null: false,
+    field :my_conversations, [ Types::ConversationType ], null: false,
           description: "All conversations for the current user, ordered by most recent activity"
 
     def my_conversations

@@ -18,6 +18,6 @@ class CreateBallisticDrops < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :ballistic_drops, [:ballistic_profile_id, :distance_yards], unique: true, name: 'idx_drops_on_profile_and_distance'
+    add_index :ballistic_drops, [ :ballistic_profile_id, :distance_yards ], unique: true, name: 'idx_drops_on_profile_and_distance'
   end
 end
