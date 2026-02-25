@@ -7,6 +7,7 @@ module Types
     field :component, Types::ComponentType, null: false
     field :position, String
     field :specs, GraphQL::Types::JSON
+    field :owned, Boolean, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

@@ -8,6 +8,7 @@ class User < ApplicationRecord
          jwt_revocation_strategy: self
 
   has_many :builds, dependent: :destroy
+  has_many :listings, dependent: :destroy
 
   # Roles enum - admin@example.com gets admin, everyone else is user
   enum :role, { user: 0, admin: 1 }

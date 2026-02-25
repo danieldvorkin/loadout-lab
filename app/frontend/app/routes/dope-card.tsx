@@ -1,6 +1,17 @@
 import { useQuery, useMutation } from '@apollo/client/react';
 import { Link, useParams } from 'react-router';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+
+const MIL_TO_MOA = 3.438;
+const MOA_TO_MIL = 1 / 3.438;
+
+function guessStep(drops: { distanceYards: number }[]): number {
+  if (drops.length < 2) return 100;
+  const sorted = [...drops].sort((a, b) => a.distanceYards - b.distanceYards);
+  const gaps = sorted.slice(1).map((d, i) => d.distanceYards - sorted[i].distanceYards);
+  const minGap = Math.min(...gaps);
+  return minGap > 0 ? minGap : 100;
+}
 import { useAuth } from '../lib/auth-context';
 import {
   GET_BALLISTIC_PROFILE,
@@ -87,7 +98,7 @@ type DropUnit = 'moa' | 'mils';
 export default function DopeCard() {
   const { id: buildId, profileId } = useParams();
   const { isAuthenticated } = useAuth();
-  const [unit, setUnit] = useState<DropUnit>('moa');
+  const [unit, setUnit] = useState<DropUnit>('mils');
   const [showAddDrop, setShowAddDrop] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [showBulkAdd, setShowBulkAdd] = useState(false);
@@ -136,6 +147,12 @@ export default function DopeCard() {
   // Editing drop
   const [editDrop, setEditDrop] = useState<Record<string, string | boolean>>({});
 
+  // Refs for rapid entry UX
+  const lastSavedDistRef = useRef<number>(0);
+  const stepRef = useRef<number>(100);
+  const distInputRef = useRef<HTMLInputElement>(null);
+  const upsertModeRef = useRef<'add' | 'edit' | 'toggle'>('add');
+
   const { data, loading, error, refetch } = useQuery<ProfileData>(
     GET_BALLISTIC_PROFILE,
     { variables: { id: profileId }, skip: !isAuthenticated || !profileId }
@@ -147,10 +164,19 @@ export default function DopeCard() {
 
   const [upsertDrop, { loading: savingDrop }] = useMutation(UPSERT_BALLISTIC_DROP, {
     onCompleted: () => {
-      setShowAddDrop(false);
       setEditingDropId(null);
-      resetNewDrop();
       refetch();
+      if (upsertModeRef.current === 'add') {
+        // Keep form open, advance to next distance
+        setNewDrop({
+          distanceYards: String(lastSavedDistRef.current + stepRef.current),
+          dropMoa: '', dropMils: '', dropInches: '',
+          windageMoa: '', windageMils: '', windageInches: '',
+          velocityFps: '', energyFtLbs: '', timeOfFlightSec: '',
+          isVerified: false, notes: '',
+        });
+        setTimeout(() => distInputRef.current?.focus(), 50);
+      }
     },
   });
 
@@ -159,7 +185,7 @@ export default function DopeCard() {
   });
 
   const [bulkUpsert, { loading: bulkSaving }] = useMutation(BULK_UPSERT_BALLISTIC_DROPS, {
-    onCompleted: () => { setShowBulkAdd(false); refetch(); },
+    onCompleted: () => { setShowBulkAdd(false); },
   });
 
   const [generateDope, { loading: generating }] = useMutation(GENERATE_DOPE_TABLE, {
@@ -171,7 +197,6 @@ export default function DopeCard() {
         setGenerateError(null);
         setShowGeneratePanel(false);
       }
-      refetch();
     },
     onError: (err) => {
       setGenerateError(err.message);
@@ -238,7 +263,7 @@ export default function DopeCard() {
     );
   }
 
-  if (loading) {
+  if (!profile && loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-sky-50">
         <div className="flex items-center space-x-3">
@@ -273,15 +298,26 @@ export default function DopeCard() {
 
   const handleSaveNewDrop = (e: React.FormEvent) => {
     e.preventDefault();
+    upsertModeRef.current = 'add';
+    lastSavedDistRef.current = parseInt(newDrop.distanceYards) || 0;
+    stepRef.current = guessStep(drops);
+
+    const rawDrop = unit === 'mils' ? parseFloat(newDrop.dropMils || '') : parseFloat(newDrop.dropMoa || '');
+    const rawWind = unit === 'mils' ? parseFloat(newDrop.windageMils || '') : parseFloat(newDrop.windageMoa || '');
+    const dropMils = isNaN(rawDrop) ? null : unit === 'mils' ? rawDrop : parseFloat((rawDrop * MOA_TO_MIL).toFixed(3));
+    const dropMoa  = isNaN(rawDrop) ? null : unit === 'moa'  ? rawDrop : parseFloat((rawDrop * MIL_TO_MOA).toFixed(3));
+    const windMils = isNaN(rawWind) ? null : unit === 'mils' ? rawWind : parseFloat((rawWind * MOA_TO_MIL).toFixed(3));
+    const windMoa  = isNaN(rawWind) ? null : unit === 'moa'  ? rawWind : parseFloat((rawWind * MIL_TO_MOA).toFixed(3));
+
     upsertDrop({
       variables: {
         ballisticProfileId: profile.id,
         distanceYards: parseInt(newDrop.distanceYards),
-        dropMoa: newDrop.dropMoa ? parseFloat(newDrop.dropMoa) : null,
-        dropMils: newDrop.dropMils ? parseFloat(newDrop.dropMils) : null,
+        dropMoa,
+        dropMils,
         dropInches: newDrop.dropInches ? parseFloat(newDrop.dropInches) : null,
-        windageMoa: newDrop.windageMoa ? parseFloat(newDrop.windageMoa) : null,
-        windageMils: newDrop.windageMils ? parseFloat(newDrop.windageMils) : null,
+        windageMoa: windMoa,
+        windageMils: windMils,
         windageInches: newDrop.windageInches ? parseFloat(newDrop.windageInches) : null,
         velocityFps: newDrop.velocityFps ? parseInt(newDrop.velocityFps) : null,
         energyFtLbs: newDrop.energyFtLbs ? parseInt(newDrop.energyFtLbs) : null,
@@ -293,15 +329,23 @@ export default function DopeCard() {
   };
 
   const handleSaveEditDrop = (drop: BallisticDrop) => {
+    upsertModeRef.current = 'edit';
+    const rawDrop = unit === 'mils' ? parseFloat(editDrop.dropMils as string || '') : parseFloat(editDrop.dropMoa as string || '');
+    const rawWind = unit === 'mils' ? parseFloat(editDrop.windageMils as string || '') : parseFloat(editDrop.windageMoa as string || '');
+    const dropMils = isNaN(rawDrop) ? null : unit === 'mils' ? rawDrop : parseFloat((rawDrop * MOA_TO_MIL).toFixed(3));
+    const dropMoa  = isNaN(rawDrop) ? null : unit === 'moa'  ? rawDrop : parseFloat((rawDrop * MIL_TO_MOA).toFixed(3));
+    const windMils = isNaN(rawWind) ? null : unit === 'mils' ? rawWind : parseFloat((rawWind * MOA_TO_MIL).toFixed(3));
+    const windMoa  = isNaN(rawWind) ? null : unit === 'moa'  ? rawWind : parseFloat((rawWind * MIL_TO_MOA).toFixed(3));
+
     upsertDrop({
       variables: {
         ballisticProfileId: profile.id,
         distanceYards: parseInt(editDrop.distanceYards as string),
-        dropMoa: editDrop.dropMoa ? parseFloat(editDrop.dropMoa as string) : null,
-        dropMils: editDrop.dropMils ? parseFloat(editDrop.dropMils as string) : null,
+        dropMoa,
+        dropMils,
         dropInches: editDrop.dropInches ? parseFloat(editDrop.dropInches as string) : null,
-        windageMoa: editDrop.windageMoa ? parseFloat(editDrop.windageMoa as string) : null,
-        windageMils: editDrop.windageMils ? parseFloat(editDrop.windageMils as string) : null,
+        windageMoa: windMoa,
+        windageMils: windMils,
         windageInches: editDrop.windageInches ? parseFloat(editDrop.windageInches as string) : null,
         velocityFps: editDrop.velocityFps ? parseInt(editDrop.velocityFps as string) : null,
         energyFtLbs: editDrop.energyFtLbs ? parseInt(editDrop.energyFtLbs as string) : null,
@@ -334,6 +378,7 @@ export default function DopeCard() {
   };
 
   const handleToggleVerified = (drop: BallisticDrop) => {
+    upsertModeRef.current = 'toggle';
     upsertDrop({
       variables: {
         ballisticProfileId: profile.id,
@@ -471,16 +516,16 @@ export default function DopeCard() {
                 <h2 className="text-lg font-semibold text-slate-800">Dope Card</h2>
                 <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden">
                   <button
-                    onClick={() => setUnit('moa')}
-                    className={`px-3 py-1.5 text-xs font-medium transition-colors ${unit === 'moa' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                  >
-                    MOA
-                  </button>
-                  <button
                     onClick={() => setUnit('mils')}
                     className={`px-3 py-1.5 text-xs font-medium transition-colors ${unit === 'mils' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                   >
                     Mils
+                  </button>
+                  <button
+                    onClick={() => setUnit('moa')}
+                    className={`px-3 py-1.5 text-xs font-medium transition-colors ${unit === 'moa' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                  >
+                    MOA
                   </button>
                 </div>
               </div>
@@ -605,46 +650,94 @@ export default function DopeCard() {
 
             {/* Add Drop Form */}
             {showAddDrop && (
-              <div className="px-6 py-4 bg-sky-50 border-b border-sky-100">
-                <form onSubmit={handleSaveNewDrop} className="space-y-3">
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+              <div className="px-6 py-5 bg-sky-50 border-b border-sky-100">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-slate-700">Add Drop Entry</p>
+                  <p className="text-xs text-slate-400 hidden sm:block">Tab between fields · Enter or ↵ to save &amp; continue</p>
+                </div>
+                <form onSubmit={handleSaveNewDrop}>
+                  <div className="flex items-end gap-2 flex-wrap">
                     <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Distance (yds) *</label>
-                      <input type="number" required value={newDrop.distanceYards} onChange={(e) => setNewDrop({ ...newDrop, distanceYards: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Dist (yds) *</label>
+                      <input
+                        ref={distInputRef}
+                        type="number"
+                        required
+                        autoFocus
+                        value={newDrop.distanceYards}
+                        onChange={(e) => setNewDrop({ ...newDrop, distanceYards: e.target.value })}
+                        className="w-28 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Drop (MOA)</label>
-                      <input type="number" step="0.1" value={newDrop.dropMoa} onChange={(e) => setNewDrop({ ...newDrop, dropMoa: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Drop ({unit === 'mils' ? 'Mils' : 'MOA'})</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={unit === 'mils' ? newDrop.dropMils : newDrop.dropMoa}
+                        onChange={(e) => setNewDrop({ ...newDrop, [unit === 'mils' ? 'dropMils' : 'dropMoa']: e.target.value })}
+                        className="w-28 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        placeholder="0.00"
+                      />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Drop (Mils)</label>
-                      <input type="number" step="0.1" value={newDrop.dropMils} onChange={(e) => setNewDrop({ ...newDrop, dropMils: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Wind ({unit === 'mils' ? 'Mils' : 'MOA'})</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={unit === 'mils' ? newDrop.windageMils : newDrop.windageMoa}
+                        onChange={(e) => setNewDrop({ ...newDrop, [unit === 'mils' ? 'windageMils' : 'windageMoa']: e.target.value })}
+                        className="w-28 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        placeholder="0.00"
+                      />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Windage ({unit.toUpperCase()})</label>
-                      <input type="number" step="0.1" value={unit === 'moa' ? newDrop.windageMoa : newDrop.windageMils} onChange={(e) => setNewDrop({ ...newDrop, [unit === 'moa' ? 'windageMoa' : 'windageMils']: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Vel (fps)</label>
+                      <input
+                        type="number"
+                        value={newDrop.velocityFps}
+                        onChange={(e) => setNewDrop({ ...newDrop, velocityFps: e.target.value })}
+                        className="w-24 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        placeholder="—"
+                      />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Velocity (fps)</label>
-                      <input type="number" value={newDrop.velocityFps} onChange={(e) => setNewDrop({ ...newDrop, velocityFps: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                    <div className="flex items-end pb-0.5">
+                      <label className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer select-none px-2 py-2">
+                        <input
+                          type="checkbox"
+                          checked={newDrop.isVerified as boolean}
+                          onChange={(e) => setNewDrop({ ...newDrop, isVerified: e.target.checked })}
+                          className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
+                        />
+                        Verified
+                      </label>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">Energy (ft·lbs)</label>
-                      <input type="number" value={newDrop.energyFtLbs} onChange={(e) => setNewDrop({ ...newDrop, energyFtLbs: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                    <div className="flex-1 min-w-32">
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Notes</label>
+                      <input
+                        type="text"
+                        placeholder="Optional notes…"
+                        value={newDrop.notes}
+                        onChange={(e) => setNewDrop({ ...newDrop, notes: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 text-sm text-slate-600">
-                      <input type="checkbox" checked={newDrop.isVerified as boolean} onChange={(e) => setNewDrop({ ...newDrop, isVerified: e.target.checked })} className="rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
-                      Verified
-                    </label>
-                    <input type="text" placeholder="Notes..." value={newDrop.notes} onChange={(e) => setNewDrop({ ...newDrop, notes: e.target.value })} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
-                    <button type="submit" disabled={savingDrop} className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-50 transition-colors">
-                      {savingDrop ? 'Saving...' : 'Save'}
-                    </button>
-                    <button type="button" onClick={() => { setShowAddDrop(false); resetNewDrop(); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 transition-colors">
-                      Cancel
-                    </button>
+                    <div className="flex items-end gap-2 pb-0.5">
+                      <button
+                        type="submit"
+                        disabled={savingDrop}
+                        className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                      >
+                        {savingDrop ? 'Saving…' : 'Save & Next ↵'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setShowAddDrop(false); resetNewDrop(); }}
+                        className="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
+                      >
+                        Done
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -704,7 +797,14 @@ export default function DopeCard() {
                     <tbody className="divide-y divide-slate-50">
                       {drops.map((drop) => (
                         editingDropId === drop.id ? (
-                          <tr key={drop.id} className="bg-amber-50">
+                          <tr
+                            key={drop.id}
+                            className="bg-amber-50"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') { e.preventDefault(); handleSaveEditDrop(drop); }
+                              if (e.key === 'Escape') setEditingDropId(null);
+                            }}
+                          >
                             <td className="px-4 py-2">
                               <input type="number" value={editDrop.distanceYards as string} onChange={(e) => setEditDrop({ ...editDrop, distanceYards: e.target.value })} className="w-20 px-2 py-1 border border-slate-200 rounded text-sm text-center" />
                             </td>

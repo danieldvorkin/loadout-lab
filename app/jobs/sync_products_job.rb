@@ -32,6 +32,10 @@ class SyncProductsJob < ApplicationJob
     }
   }.freeze
 
+  # Red Hawk Rifles is handled by its own dedicated importer (BigCommerce platform
+  # with category-aware pagination). Run separately via rake redhawk:import.
+  REDHAWK_CATEGORIES = RedHawkRiflesImporter::CATEGORIES.freeze
+
   CATEGORY_MAPPINGS = {
     /chassis|stock.?system/i => "chassis",
     /trigger/i => "trigger",
@@ -68,6 +72,11 @@ class SyncProductsJob < ApplicationJob
       Rails.logger.error "[SyncProducts] Error syncing #{key}: #{e.message}"
       next
     end
+
+    # Sync Red Hawk Rifles via dedicated BigCommerce importer
+    Rails.logger.info "[SyncProducts] Syncing Red Hawk Rifles (BigCommerce)..."
+    RedHawkRiflesImporter.run!(verbose: false)
+    Rails.logger.info "[SyncProducts] Red Hawk Rifles sync complete."
 
     Rails.logger.info "[SyncProducts] Sync complete!"
   end

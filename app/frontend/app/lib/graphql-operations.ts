@@ -200,10 +200,13 @@ export const GET_BUILDS = gql`
       discipline
       totalWeightOz
       totalCostCents
+      newCostCents
+      ownedCostCents
       createdAt
       buildComponents {
         id
         position
+        owned
         component {
           id
           name
@@ -222,12 +225,15 @@ export const GET_BUILD = gql`
       discipline
       totalWeightOz
       totalCostCents
+      newCostCents
+      ownedCostCents
       createdAt
       updatedAt
       buildComponents {
         id
         position
         specs
+        owned
         component {
           id
           name
@@ -292,6 +298,7 @@ export const ADD_COMPONENT_TO_BUILD = gql`
     $componentId: ID!
     $position: String
     $specs: JSON
+    $owned: Boolean
   ) {
     addComponentToBuild(
       input: {
@@ -299,11 +306,13 @@ export const ADD_COMPONENT_TO_BUILD = gql`
         componentId: $componentId
         position: $position
         specs: $specs
+        owned: $owned
       }
     ) {
       id
       position
       specs
+      owned
       component {
         id
         name
@@ -315,6 +324,8 @@ export const ADD_COMPONENT_TO_BUILD = gql`
         id
         totalWeightOz
         totalCostCents
+        newCostCents
+        ownedCostCents
       }
     }
   }
@@ -325,6 +336,38 @@ export const REMOVE_COMPONENT_FROM_BUILD = gql`
     removeComponentFromBuild(input: { buildComponentId: $buildComponentId }) {
       success
       errors
+    }
+  }
+`;
+
+export const UPDATE_BUILD_COMPONENT = gql`
+  mutation UpdateBuildComponent(
+    $id: ID!
+    $owned: Boolean
+    $position: String
+    $specs: JSON
+  ) {
+    updateBuildComponent(
+      input: { id: $id, owned: $owned, position: $position, specs: $specs }
+    ) {
+      id
+      position
+      specs
+      owned
+      component {
+        id
+        name
+        type
+        weightOz
+        msrpCents
+      }
+      build {
+        id
+        totalWeightOz
+        totalCostCents
+        newCostCents
+        ownedCostCents
+      }
     }
   }
 `;
@@ -912,6 +955,155 @@ export const UPSERT_LOAD_TEST = gql`
 export const DELETE_LOAD_TEST = gql`
   mutation DeleteLoadTest($id: ID!) {
     deleteLoadTest(input: { id: $id }) {
+      success
+      errors
+    }
+  }
+`;
+
+// ============================================
+// Marketplace Queries
+// ============================================
+
+const LISTING_FIELDS = gql`
+  fragment ListingFields on Listing {
+    id
+    title
+    description
+    listingType
+    status
+    condition
+    priceCents
+    location
+    contactInfo
+    imageUrl
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+      avatarUrl
+      location
+    }
+    component {
+      id
+      name
+      type
+      weightOz
+      msrpCents
+      imageUrl
+      manufacturer {
+        id
+        name
+      }
+    }
+    buildComponent {
+      id
+      position
+      build {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const GET_LISTINGS = gql`
+  ${LISTING_FIELDS}
+  query GetListings($listingType: String, $search: String, $limit: Int, $offset: Int) {
+    listings(listingType: $listingType, search: $search, limit: $limit, offset: $offset) {
+      ...ListingFields
+    }
+  }
+`;
+
+export const GET_LISTING = gql`
+  ${LISTING_FIELDS}
+  query GetListing($id: ID!) {
+    listing(id: $id) {
+      ...ListingFields
+    }
+  }
+`;
+
+export const GET_MY_LISTINGS = gql`
+  ${LISTING_FIELDS}
+  query GetMyListings {
+    myListings {
+      ...ListingFields
+    }
+  }
+`;
+
+// ============================================
+// Marketplace Mutations
+// ============================================
+
+export const CREATE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation CreateListing(
+    $componentId: ID!
+    $buildComponentId: ID
+    $listingType: String!
+    $condition: String!
+    $title: String!
+    $description: String
+    $priceCents: Int
+    $location: String
+    $contactInfo: String
+    $imageUrl: String
+  ) {
+    createListing(
+      input: {
+        componentId: $componentId
+        buildComponentId: $buildComponentId
+        listingType: $listingType
+        condition: $condition
+        title: $title
+        description: $description
+        priceCents: $priceCents
+        location: $location
+        contactInfo: $contactInfo
+        imageUrl: $imageUrl
+      }
+    ) {
+      ...ListingFields
+    }
+  }
+`;
+
+export const UPDATE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation UpdateListing(
+    $id: ID!
+    $status: String
+    $title: String
+    $description: String
+    $priceCents: Int
+    $location: String
+    $contactInfo: String
+    $imageUrl: String
+  ) {
+    updateListing(
+      input: {
+        id: $id
+        status: $status
+        title: $title
+        description: $description
+        priceCents: $priceCents
+        location: $location
+        contactInfo: $contactInfo
+        imageUrl: $imageUrl
+      }
+    ) {
+      ...ListingFields
+    }
+  }
+`;
+
+export const DELETE_LISTING = gql`
+  mutation DeleteListing($id: ID!) {
+    deleteListing(input: { id: $id }) {
       success
       errors
     }

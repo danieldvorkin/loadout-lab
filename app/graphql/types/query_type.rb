@@ -203,5 +203,49 @@ module Types
                       .includes(:ballistic_drops)
                       .find_by(id: id)
     end
+
+    # Marketplace listing queries
+    field :listings, [Types::ListingType], null: false,
+          description: "Fetch active marketplace listings" do
+      argument :listing_type, String, required: false, description: "Filter by 'showcase' or 'for_sale'"
+      argument :search, String, required: false, description: "Search by title or component name"
+      argument :limit, Integer, required: false
+      argument :offset, Integer, required: false
+    end
+
+    def listings(listing_type: nil, search: nil, limit: 50, offset: 0)
+      result = Listing.active
+                      .includes(:user, component: :manufacturer, build_component: {})
+                      .recent
+
+      result = result.where(listing_type: Listing.listing_types[listing_type]) if listing_type.present?
+
+      if search.present?
+        term = "%#{search.downcase}%"
+        result = result.joins(:component)
+                       .where("LOWER(listings.title) LIKE ? OR LOWER(components.name) LIKE ?", term, term)
+      end
+
+      result.offset(offset).limit(limit)
+    end
+
+    field :listing, Types::ListingType, null: true,
+          description: "Fetch a single listing by ID" do
+      argument :id, ID, required: true
+    end
+
+    def listing(id:)
+      Listing.active.includes(:user, component: :manufacturer, build_component: {}).find_by(id: id)
+    end
+
+    field :my_listings, [Types::ListingType], null: false,
+          description: "Fetch the current user's listings (all statuses)"
+
+    def my_listings
+      return [] unless context[:current_user]
+      context[:current_user].listings
+                            .includes(component: :manufacturer, build_component: {})
+                            .recent
+    end
   end
 end

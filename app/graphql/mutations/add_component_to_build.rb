@@ -6,10 +6,11 @@ module Mutations
     argument :component_id, ID, required: true
     argument :position, String, required: false
     argument :specs, GraphQL::Types::JSON, required: false
+    argument :owned, Boolean, required: false
 
     type Types::BuildComponentType
 
-    def resolve(build_id:, component_id:, position: nil, specs: nil)
+    def resolve(build_id:, component_id:, position: nil, specs: nil, owned: false)
       # Ensure user is authenticated
       raise GraphQL::ExecutionError, 'You must be logged in to add components to a build' unless context[:current_user]
 
@@ -25,7 +26,8 @@ module Mutations
       build_component = build.build_components.new(
         component: component,
         position: position,
-        specs: specs || {}
+        specs: specs || {},
+        owned: owned
       )
 
       if build_component.save

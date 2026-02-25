@@ -19,6 +19,7 @@ module Types
 
     # Build component mutations
     field :add_component_to_build, mutation: Mutations::AddComponentToBuild
+    field :update_build_component, mutation: Mutations::UpdateBuildComponent
     field :remove_component_from_build, mutation: Mutations::RemoveComponentFromBuild
 
     # Ballistic profile mutations
@@ -37,5 +38,10 @@ module Types
     # Load test mutations
     field :upsert_load_test, mutation: Mutations::UpsertLoadTest
     field :delete_load_test, mutation: Mutations::DeleteLoadTest
+
+    # Marketplace listing mutations
+    field :create_listing, mutation: Mutations::CreateListing
+    field :update_listing, mutation: Mutations::UpdateListing
+    field :delete_listing, mutation: Mutations::DeleteListing
   end
 end

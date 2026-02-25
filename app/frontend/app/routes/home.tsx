@@ -55,6 +55,12 @@ export default function Home() {
                     My Builds
                   </Link>
                 )}
+                <Link
+                  to="/marketplace"
+                  className="text-amber-600 hover:text-amber-700 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors"
+                >
+                  Community Gear
+                </Link>
                 {isAuthenticated && user?.isAdmin && (
                   <a
                     href={import.meta.env.DEV ? 'http://localhost:3000/admin' : 'https://loadoutlab-api-3a7851c775ad.herokuapp.com/admin/'}

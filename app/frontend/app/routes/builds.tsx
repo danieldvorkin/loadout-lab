@@ -12,6 +12,7 @@ interface BuildComponent {
     name: string;
     type: string;
   };
+  owned: boolean;
 }
 
 interface Build {
@@ -20,6 +21,8 @@ interface Build {
   discipline: string | null;
   totalWeightOz: number | null;
   totalCostCents: number | null;
+  newCostCents: number | null;
+  ownedCostCents: number | null;
   createdAt: string;
   buildComponents: BuildComponent[];
 }
@@ -99,8 +102,8 @@ export default function Builds() {
 
   const builds = data?.builds || [];
 
-  const formatPrice = (cents: number | null) => {
-    if (cents === null) return 'N/A';
+  const formatPrice = (cents: number | null | undefined) => {
+    if (cents === null || cents === undefined) return 'N/A';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -285,7 +288,8 @@ export default function Builds() {
                       </div>
                       <div className="text-xs text-right">
                         <span className="text-slate-400">Cost</span>
-                        <div className="font-semibold text-slate-700">{formatPrice(build.totalCostCents)}</div>
+                        <div className="font-semibold text-slate-700">{formatPrice(build.newCostCents)} <span className="text-[11px] text-amber-600">to buy</span></div>
+                        <div className="text-[11px] text-slate-400">Total value {formatPrice(build.totalCostCents)}</div>
                       </div>
                     </div>
                     <div className="mt-5 pt-5 border-t border-slate-100">

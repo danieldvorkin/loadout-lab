@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_152828) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
     t.bigint "build_id", null: false
     t.bigint "component_id", null: false
     t.datetime "created_at", null: false
+    t.boolean "owned", default: false, null: false
     t.string "position"
     t.jsonb "specs", default: {}
     t.datetime "updated_at", null: false
@@ -75,6 +76,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
     t.datetime "created_at", null: false
     t.string "discipline"
     t.string "name"
+    t.integer "new_cost_cents", default: 0, null: false
     t.integer "total_cost_cents"
     t.decimal "total_weight_oz"
     t.datetime "updated_at", null: false
@@ -96,6 +98,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
     t.index ["manufacturer_id"], name: "index_components_on_manufacturer_id"
     t.index ["specs"], name: "index_components_on_specs", using: :gin
     t.index ["type"], name: "index_components_on_type"
+  end
+
+  create_table "listings", force: :cascade do |t|
+    t.bigint "build_component_id"
+    t.bigint "component_id", null: false
+    t.integer "condition", default: 0, null: false
+    t.string "contact_info"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "image_url"
+    t.integer "listing_type", default: 0, null: false
+    t.string "location"
+    t.integer "price_cents"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["component_id"], name: "index_listings_on_component_id"
+    t.index ["listing_type"], name: "index_listings_on_listing_type"
+    t.index ["status"], name: "index_listings_on_status"
+    t.index ["user_id"], name: "index_listings_on_user_id"
   end
 
   create_table "load_tests", force: :cascade do |t|
@@ -175,5 +198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_170000) do
   add_foreign_key "build_components", "components"
   add_foreign_key "builds", "users"
   add_foreign_key "components", "manufacturers"
+  add_foreign_key "listings", "components"
+  add_foreign_key "listings", "users"
   add_foreign_key "load_tests", "ballistic_profiles"
 end

@@ -7,6 +7,7 @@ import {
   GET_COMPONENTS,
   ADD_COMPONENT_TO_BUILD,
   REMOVE_COMPONENT_FROM_BUILD,
+  UPDATE_BUILD_COMPONENT,
 } from '../lib/graphql-operations';
 
 // ════════════════════════════════════════════
@@ -27,6 +28,7 @@ interface BuildComponent {
   id: string;
   position: string | null;
   specs: Record<string, unknown>;
+  owned: boolean;
   component: Component;
 }
 
@@ -36,6 +38,8 @@ interface Build {
   discipline: string | null;
   totalWeightOz: number | null;
   totalCostCents: number | null;
+  newCostCents: number | null;
+  ownedCostCents: number | null;
   createdAt: string;
   updatedAt: string;
   buildComponents: BuildComponent[];
@@ -87,8 +91,8 @@ const SLOT_GROUPS: SlotGroup[] = [
     icon: '🔭',
     slots: [
       { position: 'scope', label: 'Scope', icon: '🔭', description: 'Riflescope', excludes: [] },
-      { position: 'mount', label: 'Scope Mount', icon: '🔧', description: 'One-piece scope mount', excludes: [] },
-      { position: 'rings', label: 'Rings', icon: '⭕', description: 'Scope rings', excludes: [] },
+      { position: 'mount', label: 'Scope Mount', icon: '🔧', description: 'One-piece scope mount', excludes: ['rings'] },
+      { position: 'rings', label: 'Rings', icon: '⭕', description: 'Scope rings', excludes: ['mount'] },
     ],
   },
   {
@@ -115,8 +119,8 @@ ALL_SLOTS.forEach((s) => { POSITION_LABELS[s.position] = s.label; });
 // Helpers
 // ════════════════════════════════════════════
 
-const formatPrice = (cents: number | null) => {
-  if (!cents) return '—';
+const formatPrice = (cents: number | null | undefined) => {
+  if (cents === null || cents === undefined) return '—';
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 };
 
@@ -434,6 +438,7 @@ export default function BuildDetail() {
   const [swappingBcId, setSwappingBcId] = useState<string | null>(null);
   const [justAdded, setJustAdded] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [ownedUpdatingId, setOwnedUpdatingId] = useState<string | null>(null);
   const slotRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { data, loading, error, refetch } = useQuery<{ build: Build | null }>(GET_BUILD, {
@@ -445,6 +450,7 @@ export default function BuildDetail() {
 
   const [addComponent] = useMutation(ADD_COMPONENT_TO_BUILD);
   const [removeComponent] = useMutation(REMOVE_COMPONENT_FROM_BUILD);
+  const [updateBuildComponent] = useMutation(UPDATE_BUILD_COMPONENT);
 
   // ── Position → BuildComponent map ──
   const slotMap = useMemo(() => {
@@ -559,6 +565,19 @@ export default function BuildDetail() {
     setPickerSlot({ position: 'other', label: 'Extra Component', icon: '📦', description: '', excludes: [] });
   };
 
+  const toggleOwned = async (bc: BuildComponent) => {
+    try {
+      setOwnedUpdatingId(bc.id);
+      await updateBuildComponent({ variables: { id: bc.id, owned: !bc.owned } });
+      setLastError(null);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error while updating component ownership';
+      setLastError(message);
+    } finally {
+      setOwnedUpdatingId(null);
+    }
+  };
+
   // Gather "extra" components: those in the 'other' position, or duplicates beyond the first in a given slot
   const extraComponents = useMemo(() => {
     const extras: BuildComponent[] = [];
@@ -655,7 +674,20 @@ export default function BuildDetail() {
             </div>
             <div className="bg-white rounded-xl border border-slate-100 p-4">
               <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Cost</div>
-              <div className="text-lg font-bold text-slate-800 mt-1">{formatPrice(build.totalCostCents)}</div>
+              <div className="text-lg font-bold text-slate-800 mt-1 flex items-baseline gap-2">
+                <span>{formatPrice(build.newCostCents)}</span>
+                <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">To buy</span>
+              </div>
+              <div className="text-xs text-slate-500 mt-2 space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-slate-600">Owned</span>
+                  <span className="text-slate-700">{formatPrice(build.ownedCostCents)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-slate-600">Total value</span>
+                  <span className="text-slate-700">{formatPrice(build.totalCostCents)}</span>
+                </div>
+              </div>
             </div>
             <div className="bg-white rounded-xl border border-slate-100 p-4">
               <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Parts</div>
@@ -752,7 +784,21 @@ export default function BuildDetail() {
 
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-slate-800 truncate">{bc.component.name}</div>
-                            <div className="text-xs text-slate-500">{bc.component.manufacturer.name}</div>
+                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                              <span className="text-xs text-slate-500">{bc.component.manufacturer.name}</span>
+                              <button
+                                onClick={() => toggleOwned(bc)}
+                                disabled={ownedUpdatingId === bc.id}
+                                className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
+                                  bc.owned
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                                } ${ownedUpdatingId === bc.id ? 'opacity-60 cursor-wait' : 'hover:border-slate-300'}`}
+                                title="Toggle owned status for cost breakdown"
+                              >
+                                {ownedUpdatingId === bc.id ? 'Saving…' : bc.owned ? 'Owned' : 'Need to buy'}
+                              </button>
+                            </div>
                           </div>
 
                           <div className="hidden sm:flex items-center gap-4 mx-4 flex-shrink-0">
@@ -760,7 +806,7 @@ export default function BuildDetail() {
                             <span className="text-xs font-medium text-emerald-600 w-16 text-right">{formatPrice(bc.component.msrpCents)}</span>
                           </div>
 
-                          <div className="flex items-center gap-1 flex-shrink-0 ml-2 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-2 flex-shrink-0 ml-2 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity">
                             <button onClick={() => handleSwap(slot, bc.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition-colors" title="Swap">
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                             </button>
@@ -860,13 +906,25 @@ export default function BuildDetail() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-slate-800 truncate">{bc.component.name}</div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs text-slate-500">{bc.component.manufacturer.name}</span>
                           {bc.position && bc.position !== 'other' && (
                             <span className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
                               {POSITION_LABELS[bc.position] || bc.position}
                             </span>
                           )}
+                          <button
+                            onClick={() => toggleOwned(bc)}
+                            disabled={ownedUpdatingId === bc.id}
+                            className={`text-[11px] font-semibold px-2 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
+                              bc.owned
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-amber-50 text-amber-700 border-amber-200'
+                            } ${ownedUpdatingId === bc.id ? 'opacity-60 cursor-wait' : 'hover:border-slate-300'}`}
+                            title="Toggle owned status for cost breakdown"
+                          >
+                            {ownedUpdatingId === bc.id ? 'Saving…' : bc.owned ? 'Owned' : 'Need to buy'}
+                          </button>
                         </div>
                       </div>
                       <div className="hidden sm:flex items-center gap-4 mx-4 flex-shrink-0">
