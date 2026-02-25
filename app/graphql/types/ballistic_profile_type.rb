@@ -46,6 +46,23 @@ module Types
       BallisticProfile::CALIBERS
     end
 
+    def build
+      dataloader.with(Dataloader::RecordLoader, Build).load(object.build_id)
+    end
+
+    def projectile
+      return nil if object.projectile_id.nil?
+      dataloader.with(Dataloader::RecordLoader, Projectile).load(object.projectile_id)
+    end
+
+    def ballistic_drops
+      dataloader.with(Dataloader::AssociationLoader, BallisticProfile, :ballistic_drops).load(object)
+    end
+
+    def load_tests
+      dataloader.with(Dataloader::AssociationLoader, BallisticProfile, :load_tests).load(object)
+    end
+
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

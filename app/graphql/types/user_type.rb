@@ -32,8 +32,12 @@ module Types
       object.provider.present?
     end
 
+    def builds
+      dataloader.with(Dataloader::AssociationLoader, User, :builds).load(object)
+    end
+
     def builds_count
-      object.builds.count
+      dataloader.with(Dataloader::AssociationLoader, User, :builds).load(object).then(&:length)
     end
   end
 end

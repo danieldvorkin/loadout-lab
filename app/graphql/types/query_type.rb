@@ -73,7 +73,7 @@ module Types
     def builds(search: nil, discipline: nil)
       return [] unless context[:current_user]
       
-      result = context[:current_user].builds.includes(:build_components, :components).order(created_at: :desc)
+      result = context[:current_user].builds.order(created_at: :desc)
       
       if search.present?
         search_term = "%#{search.downcase}%"
@@ -187,7 +187,7 @@ module Types
       return [] unless context[:current_user]
       build = context[:current_user].builds.find_by(id: build_id)
       return [] unless build
-      build.ballistic_profiles.includes(:ballistic_drops).order(created_at: :desc)
+      build.ballistic_profiles.order(created_at: :desc)
     end
 
     # Fetch a single ballistic profile by ID
@@ -200,7 +200,6 @@ module Types
       return nil unless context[:current_user]
       BallisticProfile.joins(build: :user)
                       .where(builds: { user_id: context[:current_user].id })
-                      .includes(:ballistic_drops)
                       .find_by(id: id)
     end
 
@@ -214,9 +213,7 @@ module Types
     end
 
     def listings(listing_type: nil, search: nil, limit: 50, offset: 0)
-      result = Listing.active
-                      .includes(:user, component: :manufacturer, build_component: {})
-                      .recent
+      result = Listing.active.recent
 
       result = result.where(listing_type: Listing.listing_types[listing_type]) if listing_type.present?
 
@@ -235,7 +232,7 @@ module Types
     end
 
     def listing(id:)
-      Listing.active.includes(:user, component: :manufacturer, build_component: {}).find_by(id: id)
+      Listing.active.find_by(id: id)
     end
 
     field :my_listings, [Types::ListingType], null: false,
@@ -243,9 +240,7 @@ module Types
 
     def my_listings
       return [] unless context[:current_user]
-      context[:current_user].listings
-                            .includes(component: :manufacturer, build_component: {})
-                            .recent
+      context[:current_user].listings.recent
     end
 
     # Conversation queries
@@ -255,7 +250,6 @@ module Types
     def my_conversations
       return [] unless context[:current_user]
       Conversation.for_user(context[:current_user])
-                  .includes(:listing, :buyer, :seller, :messages)
                   .recent
     end
 
@@ -266,7 +260,7 @@ module Types
 
     def conversation(id:)
       return nil unless context[:current_user]
-      conv = Conversation.includes(:listing, :buyer, :seller, messages: :user).find_by(id: id)
+      conv = Conversation.find_by(id: id)
       conv&.participant?(context[:current_user]) ? conv : nil
     end
 

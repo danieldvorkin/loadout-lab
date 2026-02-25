@@ -13,5 +13,9 @@ module Types
     field :discontinued, Boolean
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def manufacturer
+      dataloader.with(Dataloader::RecordLoader, Manufacturer).load(object.manufacturer_id)
+    end
   end
 end

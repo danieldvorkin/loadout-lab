@@ -10,5 +10,13 @@ module Types
     field :owned, Boolean, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def build
+      dataloader.with(Dataloader::RecordLoader, Build).load(object.build_id)
+    end
+
+    def component
+      dataloader.with(Dataloader::RecordLoader, Component).load(object.component_id)
+    end
   end
 end

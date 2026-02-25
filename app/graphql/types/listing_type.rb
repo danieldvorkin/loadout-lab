@@ -29,5 +29,18 @@ module Types
     def condition
       object.condition
     end
+
+    def user
+      dataloader.with(Dataloader::RecordLoader, User).load(object.user_id)
+    end
+
+    def component
+      dataloader.with(Dataloader::RecordLoader, Component).load(object.component_id)
+    end
+
+    def build_component
+      return nil if object.build_component_id.nil?
+      dataloader.with(Dataloader::RecordLoader, BuildComponent).load(object.build_component_id)
+    end
   end
 end

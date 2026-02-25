@@ -15,5 +15,21 @@ module Types
     field :ballistic_profiles, [Types::BallisticProfileType], null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def user
+      dataloader.with(Dataloader::RecordLoader, User).load(object.user_id)
+    end
+
+    def build_components
+      dataloader.with(Dataloader::AssociationLoader, Build, :build_components).load(object)
+    end
+
+    def components
+      dataloader.with(Dataloader::AssociationLoader, Build, :components).load(object)
+    end
+
+    def ballistic_profiles
+      dataloader.with(Dataloader::AssociationLoader, Build, :ballistic_profiles).load(object)
+    end
   end
 end

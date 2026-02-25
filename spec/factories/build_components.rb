@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :build_component do
     association :build
     association :component
-    position { "primary" }
+    position { "action" }
     specs { {} }
   end
 end

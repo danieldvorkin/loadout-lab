@@ -10,5 +10,9 @@ module Types
     field :components, [Types::ComponentType], null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def components
+      dataloader.with(Dataloader::AssociationLoader, Manufacturer, :components).load(object)
+    end
   end
 end
