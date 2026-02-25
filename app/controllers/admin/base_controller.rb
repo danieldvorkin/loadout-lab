@@ -1,10 +1,10 @@
 module Admin
   class BaseController < ActionController::Base
     include ActionController::Cookies
-    
+
     before_action :authenticate_admin!
-    layout 'admin'
-    
+    layout "admin"
+
     helper Admin::AdminHelper
 
     helper_method :current_user

@@ -56,6 +56,17 @@ interface AuthContextType {
   updateUser: (userData: Partial<User>) => void;
 }
 
+interface AuthMutationResult {
+  token?: string;
+  user?: User;
+  errors?: string[];
+}
+
+interface LoginMutationData { loginUser: AuthMutationResult; }
+interface GoogleOauthMutationData { googleOauthLogin: AuthMutationResult; }
+interface RegisterMutationData { registerUser: AuthMutationResult; }
+interface CurrentUserQueryData { currentUser: User | null; }
+
 interface RegisterData {
   email: string;
   password: string;
@@ -73,9 +84,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [hasToken, setHasToken] = useState(false);
   const client = useApolloClient();
 
-  const [loginMutation] = useMutation(LOGIN_USER);
-  const [registerMutation] = useMutation(REGISTER_USER);
-  const [googleOauthLoginMutation] = useMutation(GOOGLE_OAUTH_LOGIN);
+  const [loginMutation] = useMutation<LoginMutationData>(LOGIN_USER);
+  const [registerMutation] = useMutation<RegisterMutationData>(REGISTER_USER);
+  const [googleOauthLoginMutation] = useMutation<GoogleOauthMutationData>(GOOGLE_OAUTH_LOGIN);
 
   // Check for token on client side only
   useEffect(() => {
@@ -87,20 +98,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Check for existing token on mount
-  const { data: currentUserData, loading: currentUserLoading } = useQuery(GET_CURRENT_USER, {
+  const { data: currentUserData, loading: currentUserLoading, error: currentUserError } = useQuery<CurrentUserQueryData>(GET_CURRENT_USER, {
     skip: !hasToken,
-    onError: () => {
-      // Token is invalid, clear it
+  });
+
+  // Token is invalid if query errors — clear it
+  useEffect(() => {
+    if (currentUserError) {
       removeToken();
       setUser(null);
       setIsLoading(false);
-    },
-  });
+    }
+  }, [currentUserError]);
 
   useEffect(() => {
     if (hasToken && !currentUserLoading) {
       if (currentUserData?.currentUser) {
-        setUser(currentUserData.currentUser);
+        setUser(currentUserData.currentUser as User);
       }
       setIsLoading(false);
     }
@@ -178,7 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refetchUser = useCallback(async () => {
     try {
-      const { data } = await client.query({
+      const { data } = await client.query<CurrentUserQueryData>({
         query: GET_USER_PROFILE,
         fetchPolicy: 'network-only',
       });
