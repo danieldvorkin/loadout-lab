@@ -188,6 +188,27 @@ export const GET_MANUFACTURERS = gql`
   }
 `;
 
+export const GET_MANUFACTURER = gql`
+  query GetManufacturer($id: ID!) {
+    manufacturer(id: $id) {
+      id
+      name
+      website
+      country
+      imageUrl
+      components {
+        id
+        name
+        type
+        weightOz
+        msrpCents
+        imageUrl
+        discontinued
+      }
+    }
+  }
+`;
+
 // ============================================
 // Build Queries
 // ============================================

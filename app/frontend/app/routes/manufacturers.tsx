@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useState, useMemo, useEffect } from 'react';
 import { GET_MANUFACTURERS } from '../lib/graphql-operations';
 import Pagination from '../components/Pagination';
@@ -18,6 +18,7 @@ interface ManufacturersData {
 
 export default function Manufacturers() {
   const { data, loading, error } = useQuery<ManufacturersData>(GET_MANUFACTURERS);
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'country'>('name');
@@ -216,7 +217,8 @@ export default function Manufacturers() {
                     {paginatedManufacturers.map((manufacturer) => (
                       <tr
                         key={manufacturer.id}
-                        className="hover:bg-sky-50/50 transition-colors"
+                        onClick={() => navigate(`/manufacturers/${manufacturer.id}`)}
+                        className="hover:bg-sky-50/50 transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4 w-16">
                           {manufacturer.imageUrl ? (
@@ -233,7 +235,7 @@ export default function Manufacturers() {
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm font-semibold text-slate-800">
+                          <div className="text-sm font-semibold text-slate-800 hover:text-sky-700 transition-colors">
                             {manufacturer.name}
                           </div>
                         </td>
@@ -248,6 +250,7 @@ export default function Manufacturers() {
                               href={manufacturer.website}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
                               className="text-sky-600 hover:text-sky-700 text-sm font-medium flex items-center gap-1 transition-colors"
                             >
                               Visit
@@ -269,9 +272,10 @@ export default function Manufacturers() {
             {/* Mobile View - Cards */}
             <div className="md:hidden grid grid-cols-1 gap-4">
               {paginatedManufacturers.map((manufacturer) => (
-                <div
+                <Link
                   key={manufacturer.id}
-                  className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
+                  to={`/manufacturers/${manufacturer.id}`}
+                  className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md hover:border-sky-200 transition-all block"
                 >
                   <div className="flex justify-between items-start mb-3 gap-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -307,6 +311,7 @@ export default function Manufacturers() {
                         href={manufacturer.website}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.preventDefault()}
                         className="text-sky-600 hover:text-sky-700 text-sm font-medium flex items-center gap-2 transition-colors w-fit"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,7 +323,7 @@ export default function Manufacturers() {
                       <span className="text-slate-400 text-sm">Website not available</span>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
 

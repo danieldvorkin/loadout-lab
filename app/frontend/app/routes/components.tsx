@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useState, useMemo, useEffect } from 'react';
 import { GET_COMPONENTS } from '../lib/graphql-operations';
 import Pagination from '../components/Pagination';
@@ -26,6 +26,7 @@ interface ComponentsData {
 
 export default function Components() {
   const { data, loading, error } = useQuery<ComponentsData>(GET_COMPONENTS);
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedManufacturer, setSelectedManufacturer] = useState<string | null>(null);
@@ -292,7 +293,8 @@ export default function Components() {
                     {paginatedComponents.map((component) => (
                       <tr
                         key={component.id}
-                        className="hover:bg-sky-50/50 transition-colors"
+                        onClick={() => navigate(`/components/${component.id}`)}
+                        className="hover:bg-sky-50/50 transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4 w-16">
                           {component.imageUrl ? (
@@ -311,13 +313,19 @@ export default function Components() {
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-slate-800">
+                          <div className="text-sm font-medium text-slate-800 group-hover:text-sky-700">
                             {component.name}
                           </div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-slate-800">
-                            {component.manufacturer.name}
+                            <Link
+                              to={`/manufacturers/${component.manufacturer.id}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="hover:text-sky-600 transition-colors"
+                            >
+                              {component.manufacturer.name}
+                            </Link>
                           </div>
                           <div className="text-xs text-slate-500">
                             {component.manufacturer.country}
@@ -355,9 +363,10 @@ export default function Components() {
             {/* Mobile View - Cards */}
             <div className="md:hidden grid grid-cols-1 gap-4">
               {paginatedComponents.map((component) => (
-                <div
+                <Link
                   key={component.id}
-                  className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md transition-shadow"
+                  to={`/components/${component.id}`}
+                  className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-4 hover:shadow-md hover:border-sky-200 transition-all block"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -419,7 +428,7 @@ export default function Components() {
                   <p className="text-xs text-slate-500 mt-3">
                     {component.manufacturer.country}
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
 
